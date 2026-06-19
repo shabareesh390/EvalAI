@@ -1,0 +1,88 @@
+name: eval_ai
+description: AI-powered student answer sheet evaluation system
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.12.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  provider: ^6.1.2
+
+  # Firebase
+  firebase_core: ^4.10.0
+  firebase_auth: ^6.5.2
+  cloud_firestore: ^6.5.0
+  firebase_storage: ^13.4.2
+  google_sign_in: ^7.2.0
+
+  # File picking
+  image_picker: ^1.1.2
+  file_picker: ^8.0.0      # To let the teacher upload the PDF
+
+  # OCR
+  google_mlkit_text_recognition: ^0.13.1
+
+  # UI
+  flutter_animate: ^4.5.0
+  shimmer: ^3.0.0
+  lottie: ^3.1.2
+  dotted_border: ^2.1.0
+
+  # Utils
+  uuid: ^4.4.2
+  intl: ^0.20.2
+
+  # Gemini AI
+  google_generative_ai: ^0.4.3
+
+  # Charts
+  fl_chart: ^0.68.0
+
+  # PDF Generation
+  pdf: ^3.13.0
+  printing: ^5.15.0
+  pdfx: ^2.9.2
+  shared_preferences: ^2.5.5
+  url_launcher: ^6.3.2
+  flutter_dotenv: ^6.0.1
+  firebase_analytics: ^12.4.3
+  connectivity_plus: ^7.1.1
+
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/animations/
+    - assets/fonts/
+    - .env
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/evalai.png" # Must match exactly!
+  min_sdk_android: 21

@@ -26,6 +26,7 @@ class EvaluateStudentScreen extends StatefulWidget {
 
 class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
   ExamModel? _selectedExam;
+  String? _selectedClass;
   final Map<String, File> _attachedFiles = {};
   final Map<String, String> _attachedFileNames = {};
   final Map<String, ExamEvaluationResult> _batchResults = {};
@@ -72,6 +73,8 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
           _buildExamSelectorDropdown(examProvider.exams),
           const SizedBox(height: 28),
           _buildClassroomHeader(),
+          const SizedBox(height: 12),
+          _buildClassSelectorDropdown(studentProvider.students),
           const SizedBox(height: 12),
           _buildClassAccordionList(studentProvider.students),
           const SizedBox(height: 32),
@@ -138,12 +141,51 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
     );
   }
 
+  Widget _buildClassSelectorDropdown(List<StudentModel> students) {
+    final Set<String> classNames = {};
+    for (var student in students) {
+      final className = student.className.trim();
+      if (className.isNotEmpty) {
+        classNames.add(className);
+      }
+    }
+
+    if (classNames.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final sortedClasses = classNames.toList()..sort();
+    final currentValue = classNames.contains(_selectedClass) ? _selectedClass : null;
+
+    return DropdownButtonFormField<String>(
+      value: currentValue,
+      isExpanded: true,
+      hint: const Text('All Classes'),
+      decoration: const InputDecoration(prefixIcon: Icon(Icons.filter_list_outlined)),
+      items: [
+        const DropdownMenuItem<String>(
+          value: null,
+          child: Text('All Classes'),
+        ),
+        ...sortedClasses.map((className) {
+          return DropdownMenuItem<String>(
+            value: className,
+            child: Text('Class Room: $className'),
+          );
+        }),
+      ],
+      onChanged: (value) => setState(() => _selectedClass = value),
+    );
+  }
+
   Widget _buildClassAccordionList(List<StudentModel> students) {
     final Map<String, List<StudentModel>> groupedClasses = {};
     for (var student in students) {
       final className = student.className.trim();
       if (className.isNotEmpty) {
-        groupedClasses.putIfAbsent(className, () => []).add(student);
+        if (_selectedClass == null || _selectedClass == className) {
+          groupedClasses.putIfAbsent(className, () => []).add(student);
+        }
       }
     }
 

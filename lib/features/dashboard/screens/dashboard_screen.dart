@@ -544,7 +544,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Score Tier Distribution', style: AppTextStyles.titleMedium),
-                    Icon(Icons.bar_chart_rounded, color: AppColors.primary.withOpacity(0.6), size: 20),
+                    Icon(Icons.bar_chart_rounded, color: AppColors.primary.withValues(alpha: 0.6), size: 20),
                   ],
                 ),
                 const SizedBox(height: 24),

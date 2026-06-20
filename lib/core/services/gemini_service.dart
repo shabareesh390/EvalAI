@@ -181,6 +181,9 @@ class GeminiService {
     } catch (e) {
       final errorStr = e.toString().toLowerCase();
       String uiMessage = "SYSTEM ERROR: $e";
+      if (uiMessage.length > 500) {
+        uiMessage = "${uiMessage.substring(0, 500)}... [Error truncated. Please try again or check the answers.]";
+      }
 
       FirebaseAnalytics.instance.logEvent(
         name: 'evaluation_failed',

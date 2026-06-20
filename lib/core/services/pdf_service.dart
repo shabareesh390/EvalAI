@@ -34,7 +34,7 @@ class PdfService {
           pw.SizedBox(height: 24),
 
           // Question-wise results
-          _buildQuestionResults(result),
+          ..._buildQuestionResults(result),
         ],
       ),
     );
@@ -308,21 +308,18 @@ class PdfService {
   }
 
   // ── Question Results ───────────────────────────────────────────────────
-  pw.Widget _buildQuestionResults(ExamEvaluationResult result) {
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Text(
-          'Question-wise Analysis',
-          style: pw.TextStyle(
-            fontSize: 16,
-            fontWeight: pw.FontWeight.bold,
-          ),
+  List<pw.Widget> _buildQuestionResults(ExamEvaluationResult result) {
+    return [
+      pw.Text(
+        'Question-wise Analysis',
+        style: pw.TextStyle(
+          fontSize: 16,
+          fontWeight: pw.FontWeight.bold,
         ),
-        pw.SizedBox(height: 12),
-        ...result.questionResults.map((q) => _buildQuestionCard(q)),
-      ],
-    );
+      ),
+      pw.SizedBox(height: 12),
+      ...result.questionResults.map((q) => pw.Wrap(children: [_buildQuestionCard(q)])),
+    ];
   }
 
   pw.Widget _buildQuestionCard(EvaluationResult q) {

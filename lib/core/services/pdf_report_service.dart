@@ -90,26 +90,28 @@ class PdfReportService {
             // ─── Question Breakdown Table ───
             pw.Text('Question Breakdown', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 8),
-            pw.TableHelper.fromTextArray(
-              context: context,
-              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-              headerDecoration: const pw.BoxDecoration(color: PdfColors.blue800),
-              rowDecoration: const pw.BoxDecoration(border: pw.Border(bottom: pw.BorderSide(color: PdfColors.grey200))),
-              cellAlignment: pw.Alignment.centerLeft,
-              columnWidths: const {
-                0: pw.FlexColumnWidth(1.2),
-                1: pw.FlexColumnWidth(1.8),
-                2: pw.FlexColumnWidth(7.0),
-              },
-              data: <List<String>>[
-                <String>['Q No', 'Score', 'Strengths / AI Remarks'],
-                ...result.questionResults.map((q) => [
-                  'Q${q.questionNumber}',
-                  '${q.marksAwarded}/${q.totalMarks}',
-                  q.strengths,
-                ]),
-              ],
-            ),
+            ...result.questionResults.map((q) => pw.Container(
+                  margin: const pw.EdgeInsets.only(bottom: 8),
+                  padding: const pw.EdgeInsets.all(12),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey300),
+                    borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Text('Q${q.questionNumber}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          pw.Text('${q.marksAwarded}/${q.totalMarks} marks', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.blue800)),
+                        ]
+                      ),
+                      pw.SizedBox(height: 6),
+                      pw.Text(q.strengths, style: const pw.TextStyle(fontSize: 11)),
+                    ]
+                  )
+                )),
           ];
         },
       ),
@@ -196,26 +198,28 @@ class PdfReportService {
             // ─── Question Breakdown Table ───
             pw.Text('Question Breakdown', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 8),
-            pw.TableHelper.fromTextArray(
-              context: context,
-              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-              headerDecoration: const pw.BoxDecoration(color: PdfColors.blue800),
-              rowDecoration: const pw.BoxDecoration(border: pw.Border(bottom: pw.BorderSide(color: PdfColors.grey200))),
-              cellAlignment: pw.Alignment.centerLeft,
-              columnWidths: const {
-                0: pw.FlexColumnWidth(1.2),
-                1: pw.FlexColumnWidth(1.8),
-                2: pw.FlexColumnWidth(7.0),
-              },
-              data: <List<String>>[
-                <String>['Q No', 'Score', 'Strengths / AI Remarks'],
-                ...evaluation.questionResults.map((q) => [
-                  'Q${q.questionNumber}',
-                  '${q.marksAwarded}/${q.totalMarks}',
-                  q.strengths,
-                ]),
-              ],
-            ),
+            ...evaluation.questionResults.map((q) => pw.Container(
+                  margin: const pw.EdgeInsets.only(bottom: 8),
+                  padding: const pw.EdgeInsets.all(12),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey300),
+                    borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Text('Q${q.questionNumber}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          pw.Text('${q.marksAwarded}/${q.totalMarks} marks', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.blue800)),
+                        ]
+                      ),
+                      pw.SizedBox(height: 6),
+                      pw.Text(q.strengths, style: const pw.TextStyle(fontSize: 11)),
+                    ]
+                  )
+                )),
           ];
         },
       ),

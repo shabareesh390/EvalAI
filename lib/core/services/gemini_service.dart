@@ -182,7 +182,8 @@ class GeminiService {
       final errorStr = e.toString().toLowerCase();
       String uiMessage = "SYSTEM ERROR: $e";
       if (uiMessage.length > 500) {
-        uiMessage = "${uiMessage.substring(0, 500)}... [Error truncated. Please try again or check the answers.]";
+        uiMessage =
+            "${uiMessage.substring(0, 500)}... [Error truncated. Please try again or check the answers.]";
       }
 
       FirebaseAnalytics.instance.logEvent(
@@ -244,7 +245,11 @@ class GeminiService {
           final marksAwarded =
               int.tryParse(matchedJson['marks']?.toString() ?? '0') ?? 0;
           final applicableTotal =
-              int.tryParse(matchedJson['applicable_total_marks']?.toString() ?? '${q.marks}') ?? q.marks;
+              int.tryParse(
+                matchedJson['applicable_total_marks']?.toString() ??
+                    '${q.marks}',
+              ) ??
+              q.marks;
           final feedback =
               matchedJson['feedback']?.toString() ?? 'Graded successfully';
 

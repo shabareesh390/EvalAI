@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
 import '../../../core/services/auth_service.dart';
 
 enum AuthStatus { initial, loading, success, error }
@@ -68,6 +69,14 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> signInWithGoogle() async {
     _setLoading();
     try {
+      if (kIsWeb) {
+        // For web, use Firebase's built-in Google Auth provider with popup
+        final googleProvider = GoogleAuthProvider();
+        await FirebaseAuth.instance.signInWithPopup(googleProvider);
+        _setSuccess();
+        return true;
+      }
+
       // V7+ Uses the instance singleton
       final googleSignIn = GoogleSignIn.instance;
 
@@ -123,7 +132,9 @@ class AuthProvider extends ChangeNotifier {
   Future<void> signOut() async {
     await _authService.signOut();
     // It's good practice to also sign out of the Google SDK so they can choose a different account next time
-    await GoogleSignIn.instance.signOut();
+    if (!kIsWeb) {
+      await GoogleSignIn.instance.signOut();
+    }
   }
 
   // ── STATE HELPERS ──────────────────────────────────────────────────────

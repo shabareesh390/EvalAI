@@ -1,8 +1,4 @@
-<img width="3264" height="3264" alt="1000324602" src="https://github.com/user-attachments/assets/ca9e53f1-a237-4efc-8bf9-292c1f1a3ea8" />
-<img width="3264" height="3264" alt="1000324603" src="https://github.com/user-attachments/assets/79b7c787-b339-4dd4-97de-304d8724b756" />
-<img width="3264" height="3264" alt="1000324604" src="https://github.com/user-attachments/assets/4057c7f0-951b-48f3-881a-fc6bf7c6c0b8" />
-<img width="3264" height="3264" alt="1000324605" src="https://github.com/user-attachments/assets/01937c91-ddb3-48d7-9312-351548266957" />
-<img width="3264" height="3264" alt="1000324606" src="https://github.com/user-attachments/assets/462bf14f-5e5d-4939-a981-6ef925e1d620" />
+<img width="3264" height="3264" alt="1000324602" src="https://github.com/user-attachments/assets/f5358582-cc22-416a-8dcc-fe746bcd22d8" />
 # EvalAI
 
 An intelligent Flutter application for evaluating student exams using Google Gemini AI.

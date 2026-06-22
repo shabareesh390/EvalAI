@@ -1,13 +1,8 @@
-<img width="3264" height="3264" alt="1000324606" src="https://github.com/user-attachments/assets/6305d3ad-9e83-4751-81db-8bab7b467692" />
-<img width="3264" height="3264" alt="1000324604" src="https://github.com/user-attachments/assets/8acdf368-6c26-403e-aa4b-935f9a84e8a6" />
-<img width="3264" height="3264" alt="1000324605" src="https://github.com/user-attachments/assets/fdee322d-04f9-40c5-af85-b779667960c3" />
-<img width="3264" height="3264" alt="1000324603" src="https://github.com/user-attachments/assets/70f9d250-2e6f-4c24-81c7-2c65196122e2" />
-<img width="3264" height="3264" alt="1000324602" src="https://github.com/user-attachments/assets/cf04538e-c72e-4062-9ba4-db06484cac6e" />
-
-<img width="3264" height="3264" alt="1000324606" src="https://github.com/user-attachments/assets/d0e5adb1-cee5-4543-8553-1a5d68366509" />
-<img width="3264" height="3264" alt="1000324604" src="https://github.com/user-attachments/assets/ca5e96f5-c2c4-440e-bcf6-1ec218f466aa" />
-<img width="3264" height="3264" alt="1000324603" src="https://github.com/user-attachments/assets/9dfc8d28-59b9-4510-b36d-01d25db5f30b" />
-<img width="3264" height="3264" alt="1000324602" src="https://github.com/user-attachments/assets/fd576dbb-dd8f-4f23-9215-16b3ed4e0b25" />
+<img width="3264" height="3264" alt="1000324602" src="https://github.com/user-attachments/assets/ca9e53f1-a237-4efc-8bf9-292c1f1a3ea8" />
+<img width="3264" height="3264" alt="1000324603" src="https://github.com/user-attachments/assets/79b7c787-b339-4dd4-97de-304d8724b756" />
+<img width="3264" height="3264" alt="1000324604" src="https://github.com/user-attachments/assets/4057c7f0-951b-48f3-881a-fc6bf7c6c0b8" />
+<img width="3264" height="3264" alt="1000324605" src="https://github.com/user-attachments/assets/01937c91-ddb3-48d7-9312-351548266957" />
+<img width="3264" height="3264" alt="1000324606" src="https://github.com/user-attachments/assets/462bf14f-5e5d-4939-a981-6ef925e1d620" />
 # EvalAI
 
 An intelligent Flutter application for evaluating student exams using Google Gemini AI.

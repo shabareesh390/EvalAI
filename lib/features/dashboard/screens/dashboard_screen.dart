@@ -221,7 +221,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Good morning,', style: AppTextStyles.bodyMedium),
+              Text('HELLO,', style: AppTextStyles.bodyMedium),
               const SizedBox(height: 4),
               Consumer<AuthProvider>(
                 builder: (context, auth, _) {

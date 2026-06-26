@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -66,7 +66,7 @@ class _BulkAddStudentsScreenState extends State<BulkAddStudentsScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Successfully saved $addedCount students! 🎉')),
+          SnackBar(content: Text('Successfully saved $addedCount students! ðŸŽ‰')),
         );
         Navigator.pop(context); // Go back to student dashboard
       }

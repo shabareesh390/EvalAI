@@ -4,7 +4,7 @@ import 'package:printing/printing.dart';
 import '../services/gemini_service.dart';
 
 class PdfService {
-  // ── Generate Student Report PDF ────────────────────────────────────────
+  /// Generates and displays a PDF report for a single student's exam evaluation.
   Future<void> generateStudentReport({
     required String studentName,
     required String examName,
@@ -46,7 +46,6 @@ class PdfService {
     );
   }
 
-  // ── Header ─────────────────────────────────────────────────────────────
   pw.Widget _buildHeader(String examName, String subject, String date) {
     return pw.Container(
       padding: const pw.EdgeInsets.only(bottom: 16),
@@ -105,7 +104,6 @@ class PdfService {
     );
   }
 
-  // ── Footer ─────────────────────────────────────────────────────────────
   pw.Widget _buildFooter(pw.Context context) {
     return pw.Container(
       padding: const pw.EdgeInsets.only(top: 8),
@@ -136,7 +134,6 @@ class PdfService {
     );
   }
 
-  // ── Student Info ───────────────────────────────────────────────────────
   pw.Widget _buildStudentInfo(
       String studentName,
       ExamEvaluationResult result,
@@ -195,7 +192,6 @@ class PdfService {
     );
   }
 
-  // ── Score Summary ──────────────────────────────────────────────────────
   pw.Widget _buildScoreSummary(ExamEvaluationResult result) {
     final percentage = result.percentage;
     PdfColor scoreColor;
@@ -274,7 +270,6 @@ class PdfService {
     );
   }
 
-  // ── Overall Feedback ───────────────────────────────────────────────────
   pw.Widget _buildOverallFeedback(String feedback) {
     return pw.Container(
       padding: const pw.EdgeInsets.all(16),
@@ -307,7 +302,6 @@ class PdfService {
     );
   }
 
-  // ── Question Results ───────────────────────────────────────────────────
   List<pw.Widget> _buildQuestionResults(ExamEvaluationResult result) {
     return [
       pw.Text(

@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/evaluation_model.dart';
 
+/// Service for interacting with the Firestore database.
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // ── Save evaluation to Firestore ───────────────────────────────────────
+  /// Saves an evaluation record to the evaluations collection.
   Future<void> saveEvaluation(EvaluationModel evaluation) async {
     await _firestore
         .collection('evaluations')
@@ -12,7 +13,7 @@ class FirestoreService {
         .set(evaluation.toMap());
   }
 
-  // ── Fetch evaluations for exam ─────────────────────────────────────────
+  /// Fetches all evaluations associated with a specific exam.
   Future<List<EvaluationModel>> fetchEvaluations(String examId) async {
     final snapshot = await _firestore
         .collection('evaluations')

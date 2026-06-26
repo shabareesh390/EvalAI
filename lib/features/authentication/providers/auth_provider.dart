@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +6,7 @@ import '../../../core/services/auth_service.dart';
 
 enum AuthStatus { initial, loading, success, error }
 
+/// Manages authentication state and provides methods for sign-in and sign-up.
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
 
@@ -20,18 +21,14 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoggedIn => _user != null;
 
   AuthProvider() {
-    // 1. INSTANT CACHE CHECK: Grab the saved user synchronously from the phone's
-    // local storage before the app even has a chance to draw the first screen.
     _user = FirebaseAuth.instance.currentUser;
 
-    // 2. Listen for any future changes (like when they manually hit sign out)
     _authService.authStateChanges.listen((user) {
       _user = user;
       notifyListeners();
     });
   }
 
-  // ── EMAIL SIGN IN ──────────────────────────────────────────────────────
   Future<bool> signIn({required String email, required String password}) async {
     _setLoading();
     try {
@@ -44,7 +41,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // ── EMAIL SIGN UP ──────────────────────────────────────────────────────
   Future<bool> signUp({
     required String email,
     required String password,
@@ -65,26 +61,19 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // ── REAL GOOGLE SIGN IN LOGIC (V7+ COMPLIANT) ────────────────────────
   Future<bool> signInWithGoogle() async {
     _setLoading();
     try {
       if (kIsWeb) {
-        // For web, use Firebase's built-in Google Auth provider with popup
         final googleProvider = GoogleAuthProvider();
         await FirebaseAuth.instance.signInWithPopup(googleProvider);
         _setSuccess();
         return true;
       }
 
-      // V7+ Uses the instance singleton
       final googleSignIn = GoogleSignIn.instance;
-
-      // Ensure it's initialized (Server Client ID is often required for Firebase)
       await googleSignIn.initialize();
-
-      // V7+ uses authenticate() instead of signIn()
-      final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
+      final GoogleSignInAccount? googleUser = await googleSignIn.authenticate();
 
       if (googleUser == null) {
         _status = AuthStatus.initial;
@@ -92,11 +81,7 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
 
-      // V7+ authentication is a synchronous property
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-
-      // In V7+, Firebase only needs the idToken for authentication.
-      // accessToken is only needed for calling other Google APIs (Drive, Calendar, etc.)
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
       );
@@ -115,7 +100,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // ── FORGOT PASSWORD ────────────────────────────────────────────────────
   Future<bool> resetPassword(String email) async {
     _setLoading();
     try {
@@ -128,16 +112,13 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // ── SIGN OUT ───────────────────────────────────────────────────────────
   Future<void> signOut() async {
     await _authService.signOut();
-    // It's good practice to also sign out of the Google SDK so they can choose a different account next time
     if (!kIsWeb) {
       await GoogleSignIn.instance.signOut();
     }
   }
 
-  // ── STATE HELPERS ──────────────────────────────────────────────────────
   void _setLoading() {
     _status = AuthStatus.loading;
     _errorMessage = null;
@@ -156,7 +137,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── ERROR HANDLING ─────────────────────────────────────────────────────
   String _getErrorMessage(String code) {
     switch (code) {
       case 'user-not-found':

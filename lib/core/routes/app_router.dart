@@ -13,8 +13,9 @@ import '../../features/evaluation/screens/evaluate_student_screen.dart';
 import '../../features/analytics/screens/analytics_screen.dart';
 import '../../core/models/question_model.dart';
 import '../../features/students/screens/bulk_add_students_screen.dart';
-import '../../features/exam/screens/create_exam_screen.dart'; // The new AI Exam Screen
+import '../../features/exam/screens/create_exam_screen.dart';
 
+/// Defines all route names used across the application.
 class AppRoutes {
   AppRoutes._();
   static const String splash              = '/';
@@ -31,9 +32,10 @@ class AppRoutes {
   static const String analytics           = '/analytics';
   static const String settings            = '/settings';
   static const String studentManagement   = '/students';
-  static const String bulkAddStudents     = '/bulk-add-students'; // New Route Added!
+  static const String bulkAddStudents     = '/bulk-add-students';
 }
 
+/// Handles routing logic and maps route names to their respective screens.
 class AppRouter {
   AppRouter._();
 
@@ -57,7 +59,7 @@ class AppRouter {
         return _buildRoute(const UploadSheetsScreen(), settings);
       case AppRoutes.studentManagement:
         return _buildRoute(const StudentManagementScreen(), settings);
-      case AppRoutes.bulkAddStudents: // New Switch Case Added!
+      case AppRoutes.bulkAddStudents:
         return _buildRoute(const BulkAddStudentsScreen(), settings);
       case AppRoutes.ocrProcessing:
         return _buildRoute(const OcrScreen(), settings);

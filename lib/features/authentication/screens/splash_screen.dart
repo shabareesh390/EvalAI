@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -36,7 +36,6 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // ── App Icon ─────────────────────────────────
             Container(
               width: 100,
               height: 100,
@@ -69,8 +68,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 .fadeIn(duration: 400.ms),
 
             const SizedBox(height: 28),
-
-            // ── App Name ──────────────────────────────────
             Text(
               'EvalAI',
               style: AppTextStyles.displayLarge.copyWith(
@@ -84,8 +81,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 .slideY(begin: 0.3, end: 0),
 
             const SizedBox(height: 8),
-
-            // ── Tagline ───────────────────────────────────
             Text(
               'Smart Evaluation, Simplified',
               style: AppTextStyles.bodyMedium.copyWith(
@@ -97,8 +92,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 .slideY(begin: 0.3, end: 0),
 
             const SizedBox(height: 80),
-
-            // ── Loading Indicator ─────────────────────────
             SizedBox(
               width: 24,
               height: 24,

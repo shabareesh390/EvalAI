@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -100,7 +100,7 @@ class _SignupScreenState extends State<SignupScreen> {
             borderRadius: BorderRadius.circular(14),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(16), // Keeps the edges slightly rounded
+            borderRadius: BorderRadius.circular(16),
             child: Image.asset(
               'assets/images/evalai.png',
               width: 64,
@@ -134,7 +134,6 @@ class _SignupScreenState extends State<SignupScreen> {
       key: _formKey,
       child: Column(
         children: [
-          // Full Name
           TextFormField(
             controller: _nameController,
             textInputAction: TextInputAction.next,
@@ -155,8 +154,6 @@ class _SignupScreenState extends State<SignupScreen> {
               .slideX(begin: -0.1, end: 0),
 
           const SizedBox(height: 16),
-
-          // Email
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
@@ -181,15 +178,13 @@ class _SignupScreenState extends State<SignupScreen> {
               .slideX(begin: -0.1, end: 0),
 
           const SizedBox(height: 16),
-
-          // Password
           TextFormField(
             controller: _passwordController,
             obscureText: !_isPasswordVisible,
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
               labelText: 'Password',
-              hintText: '••••••••',
+              hintText: 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢',
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
                 icon: Icon(
@@ -216,8 +211,6 @@ class _SignupScreenState extends State<SignupScreen> {
               .slideX(begin: -0.1, end: 0),
 
           const SizedBox(height: 16),
-
-          // Confirm Password
           TextFormField(
             controller: _confirmPasswordController,
             obscureText: !_isConfirmPasswordVisible,
@@ -225,7 +218,7 @@ class _SignupScreenState extends State<SignupScreen> {
             onFieldSubmitted: (_) => _handleSignup(),
             decoration: InputDecoration(
               labelText: 'Confirm Password',
-              hintText: '••••••••',
+              hintText: 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢',
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
                 icon: Icon(
@@ -327,7 +320,6 @@ class _SignupScreenState extends State<SignupScreen> {
           : Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // ── REAL GOOGLE ICON ──────────────────────────────
           Image.asset(
             'assets/images/google.png',
             height: 24,

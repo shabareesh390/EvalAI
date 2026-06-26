@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/models/user_model.dart';
@@ -18,7 +18,7 @@ class StudentProvider extends ChangeNotifier {
   String?            get errorMessage => _errorMessage;
   bool               get isLoading    => _status == StudentStatus.loading;
 
-  // ── Add Student ────────────────────────────────────────────────────────
+  // â”€â”€ Add Student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<bool> addStudent({
     required String name,
     required String usn,
@@ -53,7 +53,7 @@ class StudentProvider extends ChangeNotifier {
       return false;
     }
   }
-// ── Fetch Students (With Auto Document ID Injection) ───────────────────
+// â”€â”€ Fetch Students (With Auto Document ID Injection) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<void> fetchStudents(String teacherId) async {
     _setLoading();
 
@@ -88,7 +88,7 @@ class StudentProvider extends ChangeNotifier {
     }
   }
 
-  // ── Delete Student ─────────────────────────────────────────────────────
+  // â”€â”€ Delete Student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<void> deleteStudent(String studentId) async {
     try {
       await _firestore.collection('students').doc(studentId).delete();

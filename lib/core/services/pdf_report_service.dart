@@ -6,6 +6,7 @@ import '../models/exam_model.dart';
 import '../models/evaluation_model.dart';
 import 'gemini_service.dart';
 
+/// Service for generating PDF reports of exam evaluations.
 class PdfReportService {
   static Future<Uint8List> buildPdfForStudent(
     PdfPageFormat format, {
@@ -21,7 +22,6 @@ class PdfReportService {
         margin: const pw.EdgeInsets.all(32),
         build: (pw.Context context) {
           return [
-            // ─── Header Section ───
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
@@ -52,7 +52,7 @@ class PdfReportService {
             ),
             pw.SizedBox(height: 24),
 
-            // ─── Student & Exam Details ───
+
             pw.Container(
               padding: const pw.EdgeInsets.all(12),
               decoration: pw.BoxDecoration(
@@ -81,13 +81,13 @@ class PdfReportService {
             ),
             pw.SizedBox(height: 24),
 
-            // ─── AI Overall Feedback ───
+
             pw.Text('Instructor / AI Feedback', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 8),
             pw.Text(result.overallFeedback, style: const pw.TextStyle(fontSize: 11, lineSpacing: 1.5)),
             pw.SizedBox(height: 24),
 
-            // ─── Question Breakdown Table ───
+
             pw.Text('Question Breakdown', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 8),
             ...result.questionResults.map((q) => pw.Container(
@@ -129,7 +129,6 @@ class PdfReportService {
         margin: const pw.EdgeInsets.all(32),
         build: (pw.Context context) {
           return [
-            // ─── Header Section ───
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
@@ -160,7 +159,7 @@ class PdfReportService {
             ),
             pw.SizedBox(height: 24),
 
-            // ─── Student & Exam Details ───
+
             pw.Container(
               padding: const pw.EdgeInsets.all(12),
               decoration: pw.BoxDecoration(
@@ -189,13 +188,13 @@ class PdfReportService {
             ),
             pw.SizedBox(height: 24),
 
-            // ─── AI Overall Feedback ───
+
             pw.Text('Instructor / AI Feedback', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 8),
             pw.Text(evaluation.overallFeedback, style: const pw.TextStyle(fontSize: 11, lineSpacing: 1.5)),
             pw.SizedBox(height: 24),
 
-            // ─── Question Breakdown Table ───
+
             pw.Text('Question Breakdown', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 8),
             ...evaluation.questionResults.map((q) => pw.Container(

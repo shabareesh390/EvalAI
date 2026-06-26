@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,7 +29,7 @@ class _OcrScreenState extends State<OcrScreen> {
     super.dispose();
   }
 
-  // ── Pick image from gallery ────────────────────────────────────────────
+  // â”€â”€ Pick image from gallery â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<void> _pickImage() async {
     final XFile? picked = await _imagePicker.pickImage(
       source: ImageSource.gallery,
@@ -45,7 +45,7 @@ class _OcrScreenState extends State<OcrScreen> {
     }
   }
 
-  // ── Take photo with camera ─────────────────────────────────────────────
+  // â”€â”€ Take photo with camera â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<void> _takePhoto() async {
     final XFile? picked = await _imagePicker.pickImage(
       source: ImageSource.camera,
@@ -61,7 +61,7 @@ class _OcrScreenState extends State<OcrScreen> {
     }
   }
 
-  // ── Process OCR ────────────────────────────────────────────────────────
+  // â”€â”€ Process OCR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<void> _processOcr() async {
     if (_selectedImage == null) return;
 
@@ -93,18 +93,18 @@ class _OcrScreenState extends State<OcrScreen> {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          // ── Pick Image Buttons ─────────────────────────────────────────
+          // â”€â”€ Pick Image Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           _buildPickButtons(),
 
           const SizedBox(height: 24),
 
-          // ── Selected Image Preview ─────────────────────────────────────
+          // â”€â”€ Selected Image Preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           if (_selectedImage != null) _buildImagePreview(),
 
-          // ── Processing Indicator ───────────────────────────────────────
+          // â”€â”€ Processing Indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           if (_isProcessing) _buildProcessingIndicator(),
 
-          // ── OCR Result ────────────────────────────────────────────────
+          // â”€â”€ OCR Result â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           if (_ocrResult != null) ...[
             const SizedBox(height: 24),
             _buildConfidenceCard(),
@@ -118,7 +118,7 @@ class _OcrScreenState extends State<OcrScreen> {
     );
   }
 
-  // ── Pick Buttons ───────────────────────────────────────────────────────
+  // â”€â”€ Pick Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildPickButtons() {
     return Row(
       children: [
@@ -147,7 +147,7 @@ class _OcrScreenState extends State<OcrScreen> {
     ).animate().fadeIn(duration: 400.ms);
   }
 
-  // ── Image Preview ──────────────────────────────────────────────────────
+  // â”€â”€ Image Preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildImagePreview() {
     return Container(
       height: 250,
@@ -162,7 +162,7 @@ class _OcrScreenState extends State<OcrScreen> {
     ).animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.95, 0.95));
   }
 
-  // ── Processing Indicator ───────────────────────────────────────────────
+  // â”€â”€ Processing Indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildProcessingIndicator() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32),
@@ -181,7 +181,7 @@ class _OcrScreenState extends State<OcrScreen> {
     ).animate().fadeIn(duration: 400.ms);
   }
 
-  // ── Confidence Card ────────────────────────────────────────────────────
+  // â”€â”€ Confidence Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildConfidenceCard() {
     final result = _ocrResult!;
 
@@ -257,7 +257,7 @@ class _OcrScreenState extends State<OcrScreen> {
     ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0);
   }
 
-  // ── Extracted Text Card ────────────────────────────────────────────────
+  // â”€â”€ Extracted Text Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildExtractedTextCard() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -298,7 +298,7 @@ class _OcrScreenState extends State<OcrScreen> {
     ).animate().fadeIn(delay: 100.ms, duration: 400.ms).slideY(begin: 0.2, end: 0);
   }
 
-  // ── Action Button ──────────────────────────────────────────────────────
+  // â”€â”€ Action Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildActionButton() {
     final isHighConfidence =
         _ocrResult?.confidenceLevel == OcrConfidenceLevel.high;
@@ -306,7 +306,7 @@ class _OcrScreenState extends State<OcrScreen> {
     return FilledButton.icon(
       onPressed: () {
         // Navigate to evaluation with extracted text
-        // For now use sample questions — later pass real exam questions
+        // For now use sample questions â€” later pass real exam questions
         Navigator.pushNamed(
           context,
           AppRoutes.evaluation,
@@ -327,7 +327,7 @@ class _OcrScreenState extends State<OcrScreen> {
     ).animate().fadeIn(delay: 200.ms, duration: 400.ms);
   }
 
-// Sample questions for testing — replace with real exam questions later
+// Sample questions for testing â€” replace with real exam questions later
   List<QuestionModel> _getSampleQuestions() {
     return [
       QuestionModel(

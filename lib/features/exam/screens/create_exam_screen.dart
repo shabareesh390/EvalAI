@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
@@ -30,17 +30,17 @@ class _CreateExamScreenState extends State<CreateExamScreen> {
     if (errorString.contains('503') ||
         errorString.contains('high demand') ||
         errorString.contains('UNAVAILABLE')) {
-      return 'Google AI servers are currently experiencing high demand. Please wait a few seconds and try again. ⏳';
+      return 'Google AI servers are currently experiencing high demand. Please wait a few seconds and try again. â³';
     } else if (errorString.contains('SocketException') ||
         errorString.contains('Failed host lookup')) {
-      return 'No internet connection found. Please check your network connection and try again. 📶';
+      return 'No internet connection found. Please check your network connection and try again. ðŸ“¶';
     } else if (errorString.contains('API key') || errorString.contains('400')) {
-      return 'There is an issue with your Gemini API key configuration. Please verify your credentials. 🔑';
+      return 'There is an issue with your Gemini API key configuration. Please verify your credentials. ðŸ”‘';
     } else if (errorString.contains('timeout')) {
-      return 'The connection timed out. The PDF file may be too large or the internet connection is unstable. ⏳';
+      return 'The connection timed out. The PDF file may be too large or the internet connection is unstable. â³';
     }
 
-    return 'Failed to process document. Please verify the file structure and try again. 📄';
+    return 'Failed to process document. Please verify the file structure and try again. ðŸ“„';
   }
 
   Future<void> _uploadAndParsePDF() async {
@@ -86,7 +86,7 @@ class _CreateExamScreenState extends State<CreateExamScreen> {
         ]),
       ];
 
-      // ── INJECTED: Silent Exponential Backoff Auto-Retry Loop ──────────
+      // â”€â”€ INJECTED: Silent Exponential Backoff Auto-Retry Loop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       GenerateContentResponse? response;
       int maxRetries = 3; // Will try up to 3 times silently
       int attempts = 0;
@@ -111,7 +111,7 @@ class _CreateExamScreenState extends State<CreateExamScreen> {
           await Future.delayed(Duration(seconds: 2 * attempts));
         }
       }
-      // ─────────────────────────────────────────────────────────────────
+      // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
       if (response?.text != null) {
         setState(() {
@@ -249,7 +249,7 @@ class _CreateExamScreenState extends State<CreateExamScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Exam saved successfully! 🎉')),
+          const SnackBar(content: Text('Exam saved successfully! ðŸŽ‰')),
         );
         Navigator.pop(context);
       }

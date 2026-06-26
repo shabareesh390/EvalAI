@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -62,7 +62,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  // ── Form State ─────────────────────────────────────────────────────────
   Widget _buildFormState(AuthProvider authProvider) {
     return Form(
       key: _formKey,
@@ -70,8 +69,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 16),
-
-          // Icon
           Container(
             width: 64,
             height: 64,
@@ -105,8 +102,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               .fadeIn(delay: 200.ms, duration: 400.ms),
 
           const SizedBox(height: 40),
-
-          // Email field
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
@@ -130,8 +125,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               .slideX(begin: -0.1, end: 0),
 
           const SizedBox(height: 24),
-
-          // Send button
           FilledButton(
             onPressed: authProvider.isLoading ? null : _handleReset,
             child: authProvider.isLoading
@@ -151,8 +144,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               .slideY(begin: 0.3, end: 0),
 
           const SizedBox(height: 16),
-
-          // Back to login
           Center(
             child: TextButton(
               onPressed: () => Navigator.pop(context),
@@ -169,12 +160,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  // ── Success State ──────────────────────────────────────────────────────
   Widget _buildSuccessState() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Success icon
         Container(
           width: 100,
           height: 100,

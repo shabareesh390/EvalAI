@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/constants/app_colors.dart';
@@ -32,7 +32,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  // ── Native Error-Free Dialog Viewer ───────────────────────────────────
+
   void _showSavedExamsDialog() {
     final teacherId = context.read<AuthProvider>().user?.uid ?? '';
 
@@ -110,10 +110,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             SliverToBoxAdapter(child: _buildStatsGrid()),
             SliverToBoxAdapter(child: _buildQuickActionsHeader()),
             SliverToBoxAdapter(child: _buildQuickActions()),
-            // ── INJECTED CHART MODULES ──
             SliverToBoxAdapter(child: _buildChartHeader()),
             SliverToBoxAdapter(child: _buildPerformanceChart()),
-            // ────────────────────────────
             SliverToBoxAdapter(child: _buildRecentExamsHeader()),
             SliverToBoxAdapter(child: _buildRecentExams()),
             SliverToBoxAdapter(child: _buildRecentEvaluationsHeader()),
@@ -487,7 +485,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         .slideY(begin: 0.3, end: 0);
   }
 
-  // ── INJECTED: Chart Section Header ─────────────────────────────────────
+
   Widget _buildChartHeader() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
@@ -495,7 +493,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ).animate().fadeIn(delay: 750.ms, duration: 400.ms);
   }
 
-  // ── INJECTED: Live Custom Performance Analytics Chart Bar Widget ─────────
+
   Widget _buildPerformanceChart() {
     final teacherId = context.read<AuthProvider>().user?.uid ?? '';
 
@@ -548,7 +546,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                // Core Graphic Layout Framework Rendering Block
+
                 SizedBox(
                   height: 140,
                   child: Row(
@@ -570,7 +568,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ).animate().fadeIn(delay: 820.ms, duration: 400.ms);
   }
 
-  // Sub-helper structure to build cleanly proportional graph lines
+
   Widget _buildVerticalBar(String label, int currentCount, int maxVal, Color barColor) {
     final double computedHeightRatio = currentCount / maxVal;
 
@@ -770,7 +768,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Text(exam.name, style: AppTextStyles.titleMedium),
                     const SizedBox(height: 2),
                     Text(
-                      '${exam.subject} • ${exam.date}',
+                      '${exam.subject} â€¢ ${exam.date}',
                       style: AppTextStyles.caption,
                     ),
                   ],
@@ -914,7 +912,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               
               // Find the corresponding exam to get the subject name
               final exam = examProvider.exams.where((e) => e.id == evaluation.examId).firstOrNull;
-              final subjectText = exam != null && exam.subject.isNotEmpty ? '${exam.subject} • ' : '';
+              final subjectText = exam != null && exam.subject.isNotEmpty ? '${exam.subject} â€¢ ' : '';
 
               return Card(
                 margin: EdgeInsets.only(bottom: index < docs.length - 1 ? 12 : 0),
@@ -937,7 +935,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                   title: Text(evaluation.studentName, style: AppTextStyles.titleMedium),
-                  subtitle: Text('$subjectText${evaluation.examName} • Score: ${evaluation.totalMarksAwarded}/${evaluation.totalMarks}'),
+                  subtitle: Text('$subjectText${evaluation.examName} â€¢ Score: ${evaluation.totalMarksAwarded}/${evaluation.totalMarks}'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

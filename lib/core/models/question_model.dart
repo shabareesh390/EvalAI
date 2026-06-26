@@ -1,3 +1,4 @@
+/// Represents a single question within an exam blueprint.
 class QuestionModel {
   final String id;
   final int questionNumber;
@@ -15,7 +16,6 @@ class QuestionModel {
     required this.rubric,
   });
 
-  // Convert to Map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -27,7 +27,6 @@ class QuestionModel {
     };
   }
 
-  // Create from Firestore Map
   factory QuestionModel.fromMap(Map<String, dynamic> map) {
     return QuestionModel(
       id: map['id'] ?? '',
@@ -39,7 +38,6 @@ class QuestionModel {
     );
   }
 
-  // CopyWith — update specific fields without recreating the whole object
   QuestionModel copyWith({
     String? id,
     int? questionNumber,

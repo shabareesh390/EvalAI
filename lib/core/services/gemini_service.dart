@@ -51,6 +51,7 @@ class ExamEvaluationResult {
       totalMarks > 0 ? (totalMarksAwarded / totalMarks) * 100 : 0;
 }
 
+/// Service for interacting with the Gemini API to evaluate student answers.
 class GeminiService {
   late final GenerativeModel _model;
 
@@ -66,7 +67,7 @@ class GeminiService {
     );
   }
 
-  // ── THE SHIELD: Exponential Backoff ──────────────────────────
+  /// Executes a Gemini API request with exponential backoff to handle quota limits.
   Future<GenerateContentResponse> _generateContentWithRetry(
     List<Content> prompt,
   ) async {
@@ -103,7 +104,7 @@ class GeminiService {
     throw Exception('Failed to reach Gemini servers.');
   }
 
-  // ── EXPERT EVALUATOR ENGINE ──────────────────────────
+  /// Evaluates student answers against the exam blueprint using Gemini.
   Future<ExamEvaluationResult> evaluateExamDirect({
     required List<QuestionModel> questions,
     required Uint8List fileBytes,
@@ -195,7 +196,7 @@ class GeminiService {
         },
       );
 
-      // Friendly message for Free Tier Quota Limits (No Emojis!)
+      // Handle Free Tier Quota Limits
       if (errorStr.contains('quota') || errorStr.contains('429')) {
         uiMessage =
             "RATE LIMIT REACHED: The Google Free Tier allows 15 requests per minute. Please wait 60 seconds and click Evaluate again.";
@@ -211,7 +212,7 @@ class GeminiService {
     }
   }
 
-  // ── JSON PARSER & MAPPING ──────────────────────────────────
+  /// Parses the JSON output from Gemini into EvaluationResult objects.
   ExamEvaluationResult _processJsonAIResponse(
     String rawText,
     List<QuestionModel> questions,
@@ -316,9 +317,7 @@ class GeminiService {
     }
   }
 
-  // ══════════════════════════════════════════════════════════════════════
-  // ── LEGACY PUBLIC METHODS (Kept to prevent compilation errors) ──
-  // ══════════════════════════════════════════════════════════════════════
+  /// Legacy evaluation methods. Maintained for backward compatibility.
   Future<ExamEvaluationResult> evaluateExam({
     required List<QuestionModel> questions,
     required String extractedAnswerText,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/models/exam_model.dart';
@@ -6,29 +6,28 @@ import '../../../core/models/question_model.dart';
 
 enum ExamStatus { initial, loading, success, error }
 
+/// Manages the state of exams, including creation and fetching from Firestore.
 class ExamProvider extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Uuid _uuid = const Uuid();
 
-  // ── State ──────────────────────────────────────────────────────────────
   ExamStatus _status        = ExamStatus.initial;
   String?    _errorMessage;
   List<ExamModel> _exams   = [];
 
-  // ── Getters ────────────────────────────────────────────────────────────
   ExamStatus      get status       => _status;
   String?         get errorMessage => _errorMessage;
   List<ExamModel> get exams        => _exams;
   bool            get isLoading    => _status == ExamStatus.loading;
 
-  // ── Create Exam ────────────────────────────────────────────────────────
+  /// Creates a new exam and saves it to Firestore.
   Future<bool> createExam({
     required String name,
     required String subject,
     required int totalMarks,
     required String date,
     required String teacherId,
-    required String className, // 1. Added className parameter
+    required String className,
     required List<QuestionModel> questions,
   }) async {
     _setLoading();
@@ -42,7 +41,7 @@ class ExamProvider extends ChangeNotifier {
         totalMarks: totalMarks,
         date: date,
         teacherId: teacherId,
-        className: className, // 2. Passed className into constructor
+        className: className,
         questions: questions,
         createdAt: DateTime.now(),
       );
@@ -62,7 +61,7 @@ class ExamProvider extends ChangeNotifier {
     }
   }
 
-  // ── Fetch Exams (Self-Healing) ─────────────────────────────────────────
+  /// Fetches exams for a specific teacher, gracefully skipping corrupted documents.
   Future<void> fetchExams(String teacherId) async {
     _setLoading();
     try {
@@ -90,7 +89,6 @@ class ExamProvider extends ChangeNotifier {
     }
   }
 
-  // ── Private helpers ────────────────────────────────────────────────────
   void _setLoading() {
     _status = ExamStatus.loading;
     _errorMessage = null;

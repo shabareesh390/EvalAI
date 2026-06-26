@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
             borderRadius: BorderRadius.circular(14),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(16), // Keeps the edges slightly rounded
+            borderRadius: BorderRadius.circular(16),
             child: Image.asset(
               'assets/images/evalai.png',
               width: 64,
@@ -160,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
             onFieldSubmitted: (_) => _handleLogin(),
             decoration: InputDecoration(
               labelText: 'Password',
-              hintText: '••••••••',
+              hintText: 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢',
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
                 icon: Icon(
@@ -279,7 +279,6 @@ class _LoginScreenState extends State<LoginScreen> {
           : Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // ── REAL GOOGLE ICON ──────────────────────────────
           Image.asset(
             'assets/images/google.png',
             height: 24,

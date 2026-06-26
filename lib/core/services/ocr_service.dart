@@ -1,10 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-// Use an alias to avoid colliding with the PDF generation package!
 import 'package:pdfx/pdfx.dart' as pdfx;
-
-// ── Supported Languages ────────────────────────────────────────────────────
 enum SupportedLanguage {
   english,
   hindi,
@@ -41,7 +38,6 @@ class OcrResult {
 }
 
 class OcrService {
-  // ── Recognizers ────────────────────────────────────────────────────────
   final TextRecognizer _latinRecognizer = TextRecognizer(
     script: TextRecognitionScript.latin,
   );
@@ -49,8 +45,6 @@ class OcrService {
   final TextRecognizer _devanagiriRecognizer = TextRecognizer(
     script: TextRecognitionScript.devanagiri,
   );
-
-  // ── Get recognizer for language ────────────────────────────────────────
   TextRecognizer _getRecognizer(SupportedLanguage language) {
     switch (language) {
       case SupportedLanguage.hindi:
@@ -66,8 +60,6 @@ class OcrService {
         return TextRecognizer(script: TextRecognitionScript.latin);
     }
   }
-
-  // ── Extract text from image ────────────────────────────────────────────
   Future<OcrResult> extractTextFromImage(
       File imageFile, {
         SupportedLanguage language = SupportedLanguage.auto,
@@ -121,8 +113,6 @@ class OcrService {
       detectedLanguage: detectedLang,
     );
   }
-
-  // ── Extract with specific recognizer ──────────────────────────────────
   Future<Map<String, dynamic>> _extractWithRecognizer(
       TextRecognizer recognizer,
       File imageFile,
@@ -139,8 +129,6 @@ class OcrService {
       return {'text': '', 'blocks': <String>[]};
     }
   }
-
-  // ── Extract text from PDF ──────────────────────────────────────────────
   Future<OcrResult> extractTextFromPdf(
       File pdfFile, {
         SupportedLanguage language = SupportedLanguage.auto,
@@ -151,14 +139,12 @@ class OcrService {
     int totalPages = 0;
 
     try {
-      // USING THE pdfx ALIAS HERE 👇
       final document = await pdfx.PdfDocument.openFile(pdfFile.path);
       totalPages = document.pagesCount;
 
       for (int pageNum = 1; pageNum <= totalPages; pageNum++) {
         final page = await document.getPage(pageNum);
 
-        // USING THE pdfx ALIAS HERE 👇
         final pageImage = await page.render(
           width: page.width * 2,
           height: page.height * 2,
@@ -210,8 +196,6 @@ class OcrService {
       detectedLanguage: detectedLang,
     );
   }
-
-  // ── Auto detect file type ──────────────────────────────────────────────
   Future<OcrResult> extractText(
       File file, {
         SupportedLanguage language = SupportedLanguage.auto,
@@ -223,8 +207,6 @@ class OcrService {
       return extractTextFromImage(file, language: language);
     }
   }
-
-  // ── Helpers ────────────────────────────────────────────────────────────
   double _estimateConfidence(String text, List<String> blocks) {
     if (text.isEmpty) return 0.0;
     final totalChars = text.length;
@@ -266,8 +248,6 @@ class OcrService {
       case SupportedLanguage.auto:     return 'Auto Detect';
     }
   }
-
-  // ── Dispose ───────────────────────────────────────────────────────────
   void dispose() {
     _latinRecognizer.close();
     _devanagiriRecognizer.close();

@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -132,7 +132,7 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
         return DropdownMenuItem<ExamModel>(
           value: exam,
           child: Text(
-            '${exam.name} (${exam.subject} • ${exam.totalMarks}M)',
+            '${exam.name} (${exam.subject} â€¢ ${exam.totalMarks}M)',
             overflow: TextOverflow.ellipsis,
           ),
         );
@@ -244,11 +244,11 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(student.name, style: AppTextStyles.titleMedium),
-                            Text('Roll No: ${student.rollNumber} • USN: ${student.usn} • Sec: ${student.section}', style: AppTextStyles.caption),
+                            Text('Roll No: ${student.rollNumber} â€¢ USN: ${student.usn} â€¢ Sec: ${student.section}', style: AppTextStyles.caption),
                             if (hasFile)
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
-                                child: Text('📑 $fileName', style: AppTextStyles.caption.copyWith(color: AppColors.success, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                child: Text('ðŸ“‘ $fileName', style: AppTextStyles.caption.copyWith(color: AppColors.success, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
                               ),
                           ],
                         ),
@@ -312,7 +312,7 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
     );
   }
 
-  // ── UPGRADED Automated Evaluation Loop ───────────────────────────────
+  // â”€â”€ UPGRADED Automated Evaluation Loop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<void> _startBatchEvaluationPipeline(List<StudentModel> allStudents) async {
     final evaluationProvider = context.read<EvaluationProvider>();
     final teacherId = context.read<AuthProvider>().user?.uid ?? '';
@@ -457,9 +457,9 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
                 ),
               ),
               title: Text(student.name, style: AppTextStyles.titleMedium),
-              subtitle: Text('Roll No: ${student.rollNumber} • Feedback: ${scoreCard.overallFeedback}'),
+              subtitle: Text('Roll No: ${student.rollNumber} â€¢ Feedback: ${scoreCard.overallFeedback}'),
 
-              // ── ADDED: PDF Print Button inside the trailing row ──
+              // â”€â”€ ADDED: PDF Print Button inside the trailing row â”€â”€
               trailing: needsManualReview
                   ? OutlinedButton.icon(
                 onPressed: () => _showManualGradeDialog(student, scoreCard),

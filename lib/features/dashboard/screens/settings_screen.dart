@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
-// FIXED: Hidden name collision interface to clear the ambiguous compiler error
 import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
-import 'package:shared_preferences/shared_preferences.dart'; // INTEGRATED: Local persistence
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -21,7 +20,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  // ── Settings State ─────────────────────────────────────────────────────
+
   bool _spellCheck = false;
   bool _negativeMarking = false;
   bool _autoEvaluate = true;
@@ -34,10 +33,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadPersistedSettings(); // Pull configurations out of local storage on initialization
+    _loadPersistedSettings();
   }
 
-  // ── Persistence Methods ────────────────────────────────────────────────
+
   Future<void> _loadPersistedSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -68,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await prefs.setString(key, value);
   }
 
-  // ── Update Profile Picture ──────────────────────────────────────────────
+
   Future<void> _updateProfilePicture() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -106,7 +105,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  // ── Edit Name Dialog Form ──────────────────────────────────────────────
+
   void _showEditNameDialog(String currentName) {
     final nameController = TextEditingController(text: currentName);
     final formKey = GlobalKey<FormState>();
@@ -146,10 +145,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
 
                   if (mounted) {
-                    setState(() {}); // Re-render local display references
+                    setState(() {});
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Profile name updated successfully! 🎉'),
+                        content: Text('Profile name updated successfully! ðŸŽ‰'),
                       ),
                     );
                   }
@@ -169,7 +168,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // ── About Dialog ───────────────────────────────────────────────────────
+
   void _showAboutDialog() {
     showDialog(
       context: context,
@@ -191,23 +190,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  '• Save Time: Reduce hours of manual grading to minutes.',
+                  'â€¢ Save Time: Reduce hours of manual grading to minutes.',
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  '• Maintain Consistency: Ensure uniform scoring criteria across all student submissions.',
+                  'â€¢ Maintain Consistency: Ensure uniform scoring criteria across all student submissions.',
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  '• Provide Actionable Insights: Generate detailed feedback that helps students identify their strengths and areas for improvement.',
+                  'â€¢ Provide Actionable Insights: Generate detailed feedback that helps students identify their strengths and areas for improvement.',
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  '• Digitize the Classroom: Seamlessly move from handwritten answer sheets to a structured, digital grading workflow.',
+                  'â€¢ Digitize the Classroom: Seamlessly move from handwritten answer sheets to a structured, digital grading workflow.',
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  'Our mission is to support educators in focusing on what matters most—teaching and student success.',
+                  'Our mission is to support educators in focusing on what matters mostâ€”teaching and student success.',
                 ),
               ],
             ),
@@ -223,7 +222,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // ── Help & Support Dialog ──────────────────────────────────────────────
+
   void _showHelpSupportDialog() {
     showDialog(
       context: context,
@@ -311,45 +310,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          // ── Profile Card ───────────────────────────────────────────────
+
           _buildProfileCard(userName, userEmail),
 
           const SizedBox(height: 24),
 
-          // ── Evaluation Settings ────────────────────────────────────────
+
           _buildSectionHeader('Evaluation Settings'),
           const SizedBox(height: 12),
           _buildEvaluationSettings(),
 
           const SizedBox(height: 24),
 
-          // ── AI Settings ────────────────────────────────────────────────
+
           _buildSectionHeader('AI Settings'),
           const SizedBox(height: 12),
           _buildAiSettings(),
 
           const SizedBox(height: 24),
 
-          // ── Notification Settings ──────────────────────────────────────
+
           _buildSectionHeader('Notifications'),
           const SizedBox(height: 12),
           _buildNotificationSettings(),
 
           const SizedBox(height: 24),
 
-          // ── Account ────────────────────────────────────────────────────
+
           _buildSectionHeader('Account'),
           const SizedBox(height: 12),
           _buildAccountSettings(),
 
           const SizedBox(height: 32),
 
-          // ── Logout Button ──────────────────────────────────────────────
+
           _buildLogoutButton(),
 
           const SizedBox(height: 16),
 
-          // ── App Version ───────────────────────────────────────────────
+
           Center(child: Text('EvalAI v1.0.0', style: AppTextStyles.caption)),
 
           const SizedBox(height: 32),
@@ -695,7 +694,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ).animate().fadeIn(delay: 300.ms, duration: 400.ms);
   }
 
-  // FIXED: Wrapped account settings in Material layout to permit ripple interactions correctly
+
   Widget _buildAccountSettings() {
     return Material(
       color: AppColors.surface,
@@ -836,7 +835,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // FIXED: Replaced default ListTile hook with interactive Inkwell structure to repair tap UI
   Widget _buildActionTile({
     required IconData icon,
     required String title,
@@ -869,7 +867,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // FIXED: Added color boundary formatting
   Widget _buildDivider() {
     return const Divider(
       height: 1,

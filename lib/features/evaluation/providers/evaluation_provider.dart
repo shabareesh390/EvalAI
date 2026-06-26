@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+﻿import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import 'package:uuid/uuid.dart';
@@ -11,6 +11,7 @@ import '../../../core/services/gemini_service.dart';
 
 enum EvaluationProviderStatus { initial, loading, success, error }
 
+/// Manages the state of exam evaluations, including saving to Firestore and interacting with Gemini.
 class EvaluationProvider extends ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
   final GeminiService _geminiService = GeminiService();
@@ -28,7 +29,7 @@ class EvaluationProvider extends ChangeNotifier {
       _status == EvaluationProviderStatus.loading;
   String                   get currentStep  => _currentStep;
 
-  // ── Save evaluation to Firestore ───────────────────────────────────────
+  /// Saves an evaluation record to Firestore.
   Future<bool> saveEvaluation({
     required ExamModel exam,
     required StudentModel student,
@@ -81,7 +82,7 @@ class EvaluationProvider extends ChangeNotifier {
     }
   }
 
-  // ── Fetch evaluations for exam ─────────────────────────────────────────
+  /// Fetches all evaluations associated with a specific exam ID.
   Future<void> fetchEvaluations(String examId) async {
     _setLoading('Loading evaluations...');
     try {
@@ -93,8 +94,7 @@ class EvaluationProvider extends ChangeNotifier {
     }
   }
 
-  // ── UPGRADED: Direct Multimodal Evaluation with Gemini ──────────────────
-  /// Sends the student's answer sheet file bytes directly to gemini-1.5-flash,
+  /// Sends the student's answer sheet file bytes directly to Gemini,
   /// avoiding errors caused by empty local OCR text extractions.
   Future<ExamEvaluationResult?> evaluate({
     required ExamModel exam,

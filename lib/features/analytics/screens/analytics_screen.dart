@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../core/constants/app_colors.dart';
@@ -12,13 +12,13 @@ class AnalyticsScreen extends StatefulWidget {
 }
 
 class _AnalyticsScreenState extends State<AnalyticsScreen> {
-  // ── Mock data — will be replaced with Firestore data ──────────────────
+  // TODO: Replace mock data with Firestore data
   final double _classAverage = 72.5;
   final double _highestScore = 95.0;
   final double _lowestScore  = 38.0;
   final double _passPercent  = 78.0;
 
-  // Bar chart data — marks distribution
+
   final List<BarData> _barData = [
     BarData(range: '0-20',  count: 2,  color: AppColors.error),
     BarData(range: '21-40', count: 4,  color: AppColors.warning),
@@ -27,7 +27,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     BarData(range: '81-100',count: 11, color: AppColors.success),
   ];
 
-  // Pie chart data — subject performance
+
   final List<PieData> _pieData = [
     PieData(subject: 'Physics',   percentage: 72, color: AppColors.primary),
     PieData(subject: 'Chemistry', percentage: 68, color: AppColors.success),
@@ -47,12 +47,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          // ── Summary Cards ──────────────────────────────────────────────
+
           _buildSummaryCards(),
 
           const SizedBox(height: 28),
 
-          // ── Marks Distribution ─────────────────────────────────────────
+
           Text('Marks Distribution', style: AppTextStyles.headlineMedium)
               .animate().fadeIn(delay: 200.ms),
 
@@ -62,7 +62,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
           const SizedBox(height: 28),
 
-          // ── Subject Performance ────────────────────────────────────────
+
           Text('Subject Performance', style: AppTextStyles.headlineMedium)
               .animate().fadeIn(delay: 300.ms),
 
@@ -72,7 +72,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
           const SizedBox(height: 28),
 
-          // ── Common Mistakes ────────────────────────────────────────────
+
           Text('Common Mistakes', style: AppTextStyles.headlineMedium)
               .animate().fadeIn(delay: 400.ms),
 
@@ -86,7 +86,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  // ── Summary Cards ──────────────────────────────────────────────────────
+
   Widget _buildSummaryCards() {
     return GridView.count(
       crossAxisCount: 2,
@@ -186,7 +186,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         .slideY(begin: 0.3, end: 0);
   }
 
-  // ── Bar Chart ──────────────────────────────────────────────────────────
+
   Widget _buildBarChart() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -289,7 +289,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     ).animate().fadeIn(delay: 250.ms, duration: 400.ms);
   }
 
-  // ── Pie Chart ──────────────────────────────────────────────────────────
+
   Widget _buildPieChart() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -339,7 +339,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
           const SizedBox(height: 16),
 
-          // Legend
+
           Wrap(
             spacing: 16,
             runSpacing: 8,
@@ -366,7 +366,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     ).animate().fadeIn(delay: 350.ms, duration: 400.ms);
   }
 
-  // ── Common Mistakes ────────────────────────────────────────────────────
+
   Widget _buildCommonMistakes() {
     final mistakes = [
       _MistakeItem(
@@ -454,7 +454,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 }
 
-// ── Local Data Models ──────────────────────────────────────────────────────
+
 class BarData {
   final String range;
   final int count;

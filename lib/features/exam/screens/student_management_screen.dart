@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -79,7 +79,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
     }
   }
 
-  // ── Action 1: Create Class & Sequentially Provision Slots ──────────────
+  // â”€â”€ Action 1: Create Class & Sequentially Provision Slots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   void _showCreateClassDialog() {
     _newClassController.clear();
     _studentCountController.clear();
@@ -176,7 +176,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Class $className provisioned with $studentCount sequential roll slots! 📁')),
+          SnackBar(content: Text('Class $className provisioned with $studentCount sequential roll slots! ðŸ“')),
         );
       }
     } catch (e) {
@@ -186,7 +186,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
     }
   }
 
-  // ── Action 2: Assign Data into Provisioned Roll Position ───────────────
+  // â”€â”€ Action 2: Assign Data into Provisioned Roll Position â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   void _showAssignStudentDialog(StudentModel targetedSlot) {
     // If the profile card was unassigned, keep entry input empty, otherwise pre-fill for fast edits
     _nameController.text = targetedSlot.name == 'Unassigned Slot' ? '' : targetedSlot.name;
@@ -202,7 +202,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Assign Identity Profile', style: AppTextStyles.titleLarge),
-              Text('Class ${targetedSlot.className} • Roll Position No: ${targetedSlot.rollNumber}',
+              Text('Class ${targetedSlot.className} â€¢ Roll Position No: ${targetedSlot.rollNumber}',
                   style: AppTextStyles.caption.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -268,7 +268,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Roll No ${targetedSlot.rollNumber} updated successfully! ✅')),
+          SnackBar(content: Text('Roll No ${targetedSlot.rollNumber} updated successfully! âœ…')),
         );
       }
     } catch (e) {
@@ -437,7 +437,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                                 Text(
                                   isUnassigned
                                       ? 'Position Open'
-                                      : 'USN: ${student.usn} • Sec: ${student.section.isEmpty ? "N/A" : student.section}',
+                                      : 'USN: ${student.usn} â€¢ Sec: ${student.section.isEmpty ? "N/A" : student.section}',
                                   style: AppTextStyles.caption,
                                 ),
                               ],

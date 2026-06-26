@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -35,7 +35,7 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
     _startEvaluation();
   }
 
-  // ── Start AI Evaluation ────────────────────────────────────────────────
+  // â”€â”€ Start AI Evaluation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<void> _startEvaluation() async {
     setState(() {
       _isEvaluating = true;
@@ -100,7 +100,7 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
     );
   }
 
-  // ── Loading State ──────────────────────────────────────────────────────
+  // â”€â”€ Loading State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildLoadingState() {
     return Center(
       child: Column(
@@ -151,7 +151,7 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
     );
   }
 
-  // ── Error State ────────────────────────────────────────────────────────
+  // â”€â”€ Error State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildErrorState() {
     return Center(
       child: Column(
@@ -172,24 +172,24 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
     );
   }
 
-  // ── Results ────────────────────────────────────────────────────────────
+  // â”€â”€ Results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildResults() {
     final result = _evaluationResult!;
 
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        // ── Score Summary Card ─────────────────────────────────────────
+        // â”€â”€ Score Summary Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         _buildScoreSummary(result),
 
         const SizedBox(height: 24),
 
-        // ── Overall Feedback ───────────────────────────────────────────
+        // â”€â”€ Overall Feedback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         _buildOverallFeedback(result),
 
         const SizedBox(height: 24),
 
-        // ── Question-wise Results ──────────────────────────────────────
+        // â”€â”€ Question-wise Results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         Text('Question-wise Analysis', style: AppTextStyles.headlineMedium)
             .animate()
             .fadeIn(delay: 300.ms),
@@ -206,7 +206,7 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
     );
   }
 
-  // ── Score Summary ──────────────────────────────────────────────────────
+  // â”€â”€ Score Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildScoreSummary(ExamEvaluationResult result) {
     final percentage = result.percentage;
     Color scoreColor;
@@ -263,7 +263,7 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
         .slideY(begin: 0.3, end: 0);
   }
 
-  // ── Overall Feedback ───────────────────────────────────────────────────
+  // â”€â”€ Overall Feedback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildOverallFeedback(ExamEvaluationResult result) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -302,7 +302,7 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
         .slideY(begin: 0.2, end: 0);
   }
 
-  // ── Question Result Card ───────────────────────────────────────────────
+  // â”€â”€ Question Result Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildQuestionResult(EvaluationResult result, int index) {
     final percentage = result.percentage;
     Color resultColor;
@@ -323,7 +323,7 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
       ),
       child: Column(
         children: [
-          // ── Question Header ──────────────────────────────────────────
+          // â”€â”€ Question Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -391,7 +391,7 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
             ),
           ),
 
-          // ── Question Details ─────────────────────────────────────────
+          // â”€â”€ Question Details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(

@@ -31,4 +31,23 @@ class FirestoreService {
 
     return docs.map((doc) => EvaluationModel.fromMap(doc.data())).toList();
   }
+
+  /// Fetches all evaluations associated with a specific teacher.
+  Future<List<EvaluationModel>> fetchAllEvaluationsForTeacher(String teacherId) async {
+    final snapshot = await _firestore
+        .collection('evaluations')
+        .where('teacherId', isEqualTo: teacherId)
+        .get();
+
+    var docs = snapshot.docs;
+    docs.sort((a, b) {
+      final aData = a.data();
+      final bData = b.data();
+      final aTime = DateTime.tryParse(aData['evaluatedAt']?.toString() ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
+      final bTime = DateTime.tryParse(bData['evaluatedAt']?.toString() ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
+      return bTime.compareTo(aTime);
+    });
+
+    return docs.map((doc) => EvaluationModel.fromMap(doc.data())).toList();
+  }
 }

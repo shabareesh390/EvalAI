@@ -1,8 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/services/firestore_service.dart';
 
 class AnalyticsScreen extends StatefulWidget {
   const AnalyticsScreen({super.key});
@@ -12,33 +14,147 @@ class AnalyticsScreen extends StatefulWidget {
 }
 
 class _AnalyticsScreenState extends State<AnalyticsScreen> {
-  // TODO: Replace mock data with Firestore data
-  final double _classAverage = 72.5;
-  final double _highestScore = 95.0;
-  final double _lowestScore  = 38.0;
-  final double _passPercent  = 78.0;
+  bool _isLoading = true;
+  double _classAverage = 0.0;
+  double _highestScore = 0.0;
+  double _lowestScore  = 0.0;
+  double _passPercent  = 0.0;
 
-
-  final List<BarData> _barData = [
-    BarData(range: '0-20',  count: 2,  color: AppColors.error),
-    BarData(range: '21-40', count: 4,  color: AppColors.warning),
-    BarData(range: '41-60', count: 8,  color: AppColors.info),
-    BarData(range: '61-80', count: 15, color: AppColors.primary),
-    BarData(range: '81-100',count: 11, color: AppColors.success),
+  List<BarData> _barData = [
+    BarData(range: '0-20',  count: 0,  color: AppColors.error),
+    BarData(range: '21-40', count: 0,  color: AppColors.warning),
+    BarData(range: '41-60', count: 0,  color: AppColors.info),
+    BarData(range: '61-80', count: 0, color: AppColors.primary),
+    BarData(range: '81-100',count: 0, color: AppColors.success),
   ];
 
-
-  final List<PieData> _pieData = [
-    PieData(subject: 'Physics',   percentage: 72, color: AppColors.primary),
-    PieData(subject: 'Chemistry', percentage: 68, color: AppColors.success),
-    PieData(subject: 'Maths',     percentage: 81, color: AppColors.warning),
-    PieData(subject: 'Biology',   percentage: 65, color: AppColors.error),
-  ];
+  List<PieData> _pieData = [];
+  List<_MistakeItem> _mistakes = [];
 
   int _touchedPieIndex = -1;
 
   @override
+  void initState() {
+    super.initState();
+    _fetchAnalyticsData();
+  }
+
+  Future<void> _fetchAnalyticsData() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final firestoreService = FirestoreService();
+      final evals = await firestoreService.fetchAllEvaluationsForTeacher(user.uid);
+
+      if (evals.isEmpty) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      double totalPercentage = 0;
+      double maxScore = 0;
+      double minScore = 100;
+      int passCount = 0;
+
+      int b0_20 = 0, b21_40 = 0, b41_60 = 0, b61_80 = 0, b81_100 = 0;
+      Map<String, List<double>> examScores = {};
+
+      for (var eval in evals) {
+        double pct = eval.percentage;
+        totalPercentage += pct;
+        if (pct > maxScore) maxScore = pct;
+        if (pct < minScore) minScore = pct;
+        if (eval.isPassed) passCount++;
+
+        if (pct <= 20) {
+          b0_20++;
+        } else if (pct <= 40) {
+          b21_40++;
+        } else if (pct <= 60) {
+          b41_60++;
+        } else if (pct <= 80) {
+          b61_80++;
+        } else {
+          b81_100++;
+        }
+
+        if (!examScores.containsKey(eval.examName)) {
+          examScores[eval.examName] = [];
+        }
+        examScores[eval.examName]!.add(pct);
+      }
+
+      // Bar Chart
+      final newBarData = [
+        BarData(range: '0-20',  count: b0_20,  color: AppColors.error),
+        BarData(range: '21-40', count: b21_40,  color: AppColors.warning),
+        BarData(range: '41-60', count: b41_60,  color: AppColors.info),
+        BarData(range: '61-80', count: b61_80, color: AppColors.primary),
+        BarData(range: '81-100',count: b81_100, color: AppColors.success),
+      ];
+
+      // Pie Chart
+      final List<Color> pieColors = [AppColors.primary, AppColors.success, AppColors.warning, AppColors.error, AppColors.info];
+      final List<PieData> newPieData = [];
+      int colorIndex = 0;
+      examScores.forEach((examName, scores) {
+        double avg = scores.reduce((a, b) => a + b) / scores.length;
+        newPieData.add(PieData(subject: examName, percentage: avg, color: pieColors[colorIndex % pieColors.length]));
+        colorIndex++;
+      });
+
+      // Weaknesses (Extract top 3 recent)
+      final List<_MistakeItem> newMistakes = [];
+      for (var eval in evals) {
+        for (var q in eval.questionResults) {
+          if (q.weaknesses.trim().isNotEmpty && q.weaknesses.length > 5) {
+             if (newMistakes.length < 3) {
+                newMistakes.add(_MistakeItem(
+                  question: eval.examName.isNotEmpty ? eval.examName : 'Exam',
+                  mistake: q.weaknesses,
+                  impact: 'High',
+                  color: AppColors.error,
+                ));
+             }
+          }
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _classAverage = totalPercentage / evals.length;
+          _highestScore = maxScore;
+          _lowestScore = evals.isNotEmpty ? minScore : 0.0;
+          _passPercent = (passCount / evals.length) * 100;
+          _barData = newBarData;
+          _pieData = newPieData;
+          _mistakes = newMistakes;
+          _isLoading = false;
+        });
+      }
+
+    } catch (e) {
+      debugPrint("Error fetching analytics: $e");
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(title: const Text('Analytics')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -144,15 +260,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: AppColors.shadow.withValues(alpha: 0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,11 +305,18 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   Widget _buildBarChart() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,11 +415,18 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   Widget _buildPieChart() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
       ),
       child: Column(
         children: [
@@ -368,29 +498,22 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
 
   Widget _buildCommonMistakes() {
-    final mistakes = [
-      _MistakeItem(
-        question: 'Question 3',
-        mistake: '78% of students missed the chemical equation',
-        impact: 'High',
-        color: AppColors.error,
-      ),
-      _MistakeItem(
-        question: 'Question 5',
-        mistake: '65% of students skipped diagram labels',
-        impact: 'Medium',
-        color: AppColors.warning,
-      ),
-      _MistakeItem(
-        question: 'Question 7',
-        mistake: '45% of students gave incomplete definitions',
-        impact: 'Low',
-        color: AppColors.info,
-      ),
-    ];
+    if (_mistakes.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
+        ),
+        child: const Center(
+          child: Text('No common mistakes identified yet.', style: TextStyle(color: AppColors.textSecondary)),
+        ),
+      ).animate().fadeIn(delay: 350.ms, duration: 400.ms);
+    }
 
     return Column(
-      children: mistakes.asMap().entries.map((entry) {
+      children: _mistakes.asMap().entries.map((entry) {
         final mistake = entry.value;
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
@@ -398,8 +521,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.shadow.withValues(alpha: 0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+              border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
             ),
             child: Row(
               children: [

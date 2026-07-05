@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/constants/app_colors.dart';
@@ -337,15 +337,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: AppColors.shadow.withValues(alpha: 0.04),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -443,11 +448,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return GestureDetector(
       onTap: action.onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 2),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadow.withValues(alpha: 0.04),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+          border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -532,8 +544,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.shadow.withValues(alpha: 0.04),
+                  blurRadius: 30,
+                  offset: const Offset(0, 15),
+                ),
+              ],
+              border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -657,8 +676,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.shadow.withValues(alpha: 0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+              border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
             ),
             child: Text(
               'No exams built yet. Tap "Create Exam" to begin.',
@@ -740,8 +766,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.03),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
       ),
       child: Column(
         children: [
@@ -768,7 +801,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Text(exam.name, style: AppTextStyles.titleMedium),
                     const SizedBox(height: 2),
                     Text(
-                      '${exam.subject} â€¢ ${exam.date}',
+                      '${exam.subject} \u2022 ${exam.date}',
                       style: AppTextStyles.caption,
                     ),
                   ],
@@ -890,8 +923,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.shadow.withValues(alpha: 0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+              border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
             ),
             child: Text(
               'No evaluated students yet. When you evaluate answer sheets, their reports will appear here.',
@@ -912,16 +952,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
               
               // Find the corresponding exam to get the subject name
               final exam = examProvider.exams.where((e) => e.id == evaluation.examId).firstOrNull;
-              final subjectText = exam != null && exam.subject.isNotEmpty ? '${exam.subject} â€¢ ' : '';
+              final subjectText = exam != null && exam.subject.isNotEmpty ? '${exam.subject} \u2022 ' : '';
 
               return Card(
-                margin: EdgeInsets.only(bottom: index < docs.length - 1 ? 12 : 0),
+                margin: EdgeInsets.only(bottom: index < docs.length - 1 ? 16 : 0),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: AppColors.border),
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(color: AppColors.border.withValues(alpha: 0.5), width: 1),
                 ),
                 color: AppColors.surface,
+                shadowColor: AppColors.shadow.withValues(alpha: 0.2),
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   leading: CircleAvatar(
@@ -935,7 +976,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                   title: Text(evaluation.studentName, style: AppTextStyles.titleMedium),
-                  subtitle: Text('$subjectText${evaluation.examName} â€¢ Score: ${evaluation.totalMarksAwarded}/${evaluation.totalMarks}'),
+                  subtitle: Text('$subjectText${evaluation.examName} \u2022 Score: ${evaluation.totalMarksAwarded}/${evaluation.totalMarks}'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

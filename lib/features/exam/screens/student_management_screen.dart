@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +8,8 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/models/user_model.dart';
 import '../providers/student_provider.dart';
 import '../../authentication/providers/auth_provider.dart';
+import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/custom_text_field.dart';
 
 class StudentManagementScreen extends StatefulWidget {
   const StudentManagementScreen({super.key});
@@ -89,37 +91,36 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
       barrierDismissible: false,
       builder: (dialogContext) {
         return AlertDialog(
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text('Create Class Folder', style: AppTextStyles.titleLarge),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextFormField(
+              CustomTextField(
                 controller: _newClassController,
                 textCapitalization: TextCapitalization.characters,
-                decoration: const InputDecoration(
-                  labelText: 'Class Name (e.g., 10 A, CS-B)',
-                  prefixIcon: Icon(Icons.folder_open_rounded),
-                ),
+                label: 'Class Name (e.g., 10 A, CS-B)',
+                prefixIcon: const Icon(Icons.folder_open_rounded),
               ),
-              const SizedBox(height: 12),
-              TextFormField(
+              const SizedBox(height: 16),
+              CustomTextField(
                 controller: _studentCountController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Total Students / Seats (e.g., 30)',
-                  prefixIcon: Icon(Icons.groups_outlined),
-                ),
+                label: 'Total Students / Seats (e.g., 30)',
+                prefixIcon: const Icon(Icons.groups_outlined),
               ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
             ),
-            FilledButton(
+            CustomButton(
+              text: 'Provision Class',
               onPressed: () => _submitCreateClassBatch(dialogContext),
-              child: const Text('Provision Class'),
+              width: 160,
             ),
           ],
         );
@@ -198,10 +199,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
       barrierDismissible: false,
       builder: (dialogContext) {
         return AlertDialog(
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Assign Identity Profile', style: AppTextStyles.titleLarge),
+              const SizedBox(height: 4),
               Text('Class ${targetedSlot.className} â€¢ Roll Position No: ${targetedSlot.rollNumber}',
                   style: AppTextStyles.caption.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
             ],
@@ -212,24 +216,27 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextFormField(
+                  CustomTextField(
                     controller: _nameController,
                     textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(labelText: 'Student Full Name', prefixIcon: Icon(Icons.person_outline)),
+                    label: 'Student Full Name',
+                    prefixIcon: const Icon(Icons.person_outline),
                     validator: (v) => v!.isEmpty ? 'Name cannot remain blank' : null,
                   ),
-                  const SizedBox(height: 12),
-                  TextFormField(
+                  const SizedBox(height: 16),
+                  CustomTextField(
                     controller: _usnController,
                     textCapitalization: TextCapitalization.characters,
-                    decoration: const InputDecoration(labelText: 'USN / Seat Identity Code', prefixIcon: Icon(Icons.badge_outlined)),
+                    label: 'USN / Seat Identity Code',
+                    prefixIcon: const Icon(Icons.badge_outlined),
                     validator: (v) => v!.isEmpty ? 'University number is required' : null,
                   ),
-                  const SizedBox(height: 12),
-                  TextFormField(
+                  const SizedBox(height: 16),
+                  CustomTextField(
                     controller: _sectionController,
                     textCapitalization: TextCapitalization.characters,
-                    decoration: const InputDecoration(labelText: 'Section Code (e.g., A, B, C)', prefixIcon: Icon(Icons.grid_3x3)),
+                    label: 'Section Code (e.g., A, B, C)',
+                    prefixIcon: const Icon(Icons.grid_3x3),
                   ),
                 ],
               ),
@@ -238,11 +245,12 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
             ),
-            FilledButton(
+            CustomButton(
+              text: 'Lock Credentials',
               onPressed: () => _submitAssignStudent(dialogContext, targetedSlot),
-              child: const Text('Lock Credentials'),
+              width: 170,
             ),
           ],
         );
@@ -355,17 +363,26 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
         });
 
         return Container(
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.border),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow.withValues(alpha: 0.04),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+            border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(20),
             child: ExpansionTile(
               backgroundColor: AppColors.surface,
               collapsedBackgroundColor: AppColors.surface,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               leading: Icon(
                 classRoster.isEmpty ? Icons.create_new_folder_rounded : Icons.folder_shared_rounded,
                 color: classRoster.isEmpty ? Colors.grey.shade400 : Colors.amber,
@@ -476,10 +493,12 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text('Delete Class $className?'),
           content: Text('This will permanently delete this class folder and ALL sequential slots inside it. This action cannot be reversed.'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Cancel')),
+            TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
             TextButton(
               onPressed: () async {
                 Navigator.pop(dialogContext);

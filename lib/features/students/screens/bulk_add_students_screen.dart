@@ -1,7 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
+import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/custom_text_field.dart';
 class BulkAddStudentsScreen extends StatefulWidget {
   const BulkAddStudentsScreen({super.key});
 
@@ -83,69 +86,98 @@ class _BulkAddStudentsScreenState extends State<BulkAddStudentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(title: const Text('Add Class Batch')),
       body: _isSaving
           ? const Center(child: CircularProgressIndicator())
-          : Stepper(
-        currentStep: _currentStep,
-        onStepCancel: () => setState(() => _currentStep = 0),
-        onStepContinue: _currentStep == 0 ? _generateSlots : _saveStudentsToFirebase,
-        controlsBuilder: (context, details) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: FilledButton(
-              onPressed: details.onStepContinue,
-              child: Text(_currentStep == 0 ? 'Generate Slots' : 'Save All Students'),
-            ),
-          );
-        },
-        steps: [
-          Step(
-            title: const Text('Class Details'),
-            isActive: _currentStep >= 0,
-            content: Column(
-              children: [
-                TextField(
-                  controller: _classController,
-                  decoration: const InputDecoration(labelText: 'Class Name (e.g., 10th A)'),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _countController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Total Number of Students'),
-                ),
-              ],
-            ),
-          ),
-          Step(
-            title: const Text('Enter Student Names'),
-            isActive: _currentStep >= 1,
-            content: _nameControllers.isEmpty
-                ? const SizedBox.shrink()
-                : SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: ListView.builder(
-                itemCount: _nameControllers.length,
-                itemBuilder: (context, index) {
+          : Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: Theme.of(context).colorScheme.copyWith(primary: AppColors.primary),
+              ),
+              child: Stepper(
+                currentStep: _currentStep,
+                onStepCancel: () => setState(() => _currentStep = 0),
+                onStepContinue: _currentStep == 0 ? _generateSlots : _saveStudentsToFirebase,
+                controlsBuilder: (context, details) {
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: TextField(
-                      controller: _nameControllers[index],
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        labelText: 'Roll No. ${index + 1} Name',
-                        prefixIcon: const Icon(Icons.person_outline),
-                        border: const OutlineInputBorder(),
-                      ),
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            text: _currentStep == 0 ? 'Generate Slots' : 'Save All Students',
+                            onPressed: details.onStepContinue ?? () {},
+                          ),
+                        ),
+                        if (_currentStep != 0) ...[
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: details.onStepCancel,
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppColors.textSecondary,
+                                side: const BorderSide(color: AppColors.border),
+                                minimumSize: const Size(double.infinity, 52),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              ),
+                              child: const Text('Back'),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   );
                 },
+                steps: [
+                  Step(
+                    title: Text('Class Details', style: AppTextStyles.titleMedium),
+                    isActive: _currentStep >= 0,
+                    content: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Column(
+                        children: [
+                          CustomTextField(
+                            controller: _classController,
+                            label: 'Class Name (e.g., 10th A)',
+                            prefixIcon: const Icon(Icons.email_outlined),
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            controller: _countController,
+                            label: 'Total Number of Students',
+                            prefixIcon: const Icon(Icons.groups_outlined),
+                            keyboardType: TextInputType.number,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Step(
+                    title: Text('Enter Student Names', style: AppTextStyles.titleMedium),
+                    isActive: _currentStep >= 1,
+                    content: _nameControllers.isEmpty
+                        ? const SizedBox.shrink()
+                        : SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.45,
+                            child: ListView.builder(
+                              itemCount: _nameControllers.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12.0),
+                                  child: CustomTextField(
+                                    controller: _nameControllers[index],
+                                    label: 'Roll No. ${index + 1} Name',
+                                    prefixIcon: const Icon(Icons.person_outline),
+                                    textInputAction: TextInputAction.next,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
     );
   }
 }

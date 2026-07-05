@@ -1,8 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/custom_text_field.dart';
 import '../providers/auth_provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -52,111 +54,122 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: _emailSent ? _buildSuccessState() : _buildFormState(authProvider),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: _emailSent ? _buildSuccessState() : _buildFormState(authProvider),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildFormState(AuthProvider authProvider) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 16),
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: const Icon(
-              Icons.lock_reset_rounded,
-              size: 32,
-              color: AppColors.primary,
-            ),
-          )
-              .animate()
-              .fadeIn(duration: 400.ms)
-              .slideY(begin: -0.3, end: 0),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 72,
+          height: 72,
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: const Icon(
+            Icons.lock_reset_rounded,
+            size: 36,
+            color: AppColors.primary,
+          ),
+        ).animate().fadeIn(duration: 400.ms).scale(curve: Curves.easeOutBack),
 
-          const SizedBox(height: 24),
+        const SizedBox(height: 32),
 
-          Text('Reset Password', style: AppTextStyles.displayMedium)
-              .animate()
-              .fadeIn(delay: 100.ms, duration: 400.ms),
+        Text('Reset Password', style: AppTextStyles.displayMedium)
+            .animate()
+            .fadeIn(delay: 200.ms, duration: 400.ms)
+            .slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic),
 
-          const SizedBox(height: 8),
+        const SizedBox(height: 12),
 
-          Text(
-            'Enter your email address and we\'ll send you a link to reset your password.',
-            style: AppTextStyles.bodyMedium,
-          )
-              .animate()
-              .fadeIn(delay: 200.ms, duration: 400.ms),
+        Text(
+          'Enter your email address and we\'ll send you a link to reset your password.',
+          style: AppTextStyles.titleMedium.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w400),
+          textAlign: TextAlign.center,
+        ).animate().fadeIn(delay: 300.ms, duration: 400.ms),
 
-          const SizedBox(height: 40),
-          TextFormField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              hintText: 'teacher@school.com',
-              prefixIcon: Icon(Icons.email_outlined),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your email';
-              }
-              if (!value.contains('@')) {
-                return 'Please enter a valid email';
-              }
-              return null;
-            },
-          )
-              .animate()
-              .fadeIn(delay: 300.ms, duration: 400.ms)
-              .slideX(begin: -0.1, end: 0),
+        const SizedBox(height: 48),
 
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: authProvider.isLoading ? null : _handleReset,
-            child: authProvider.isLoading
-                ? const SizedBox(
-              width: 22,
-              height: 22,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                valueColor:
-                AlwaysStoppedAnimation<Color>(Colors.white),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow.withValues(alpha: 0.04),
+                blurRadius: 40,
+                offset: const Offset(0, 20),
               ),
-            )
-                : const Text('Send Reset Link'),
-          )
-              .animate()
-              .fadeIn(delay: 400.ms, duration: 400.ms)
-              .slideY(begin: 0.3, end: 0),
-
-          const SizedBox(height: 16),
-          Center(
-            child: TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                'Back to Login',
-                style: AppTextStyles.labelMedium.copyWith(
-                  color: AppColors.primary,
-                ),
+              BoxShadow(
+                color: AppColors.shadow.withValues(alpha: 0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
+            ],
+            border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
+          ),
+          padding: const EdgeInsets.all(32),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                CustomTextField(
+                  label: 'Email Address',
+                  hint: 'teacher@school.com',
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textSecondary),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!value.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
+                ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0),
+
+                const SizedBox(height: 32),
+
+                CustomButton(
+                  text: 'Send Reset Link',
+                  onPressed: _handleReset,
+                  isLoading: authProvider.isLoading,
+                ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.2, end: 0),
+              ],
             ),
-          ).animate().fadeIn(delay: 500.ms, duration: 400.ms),
-        ],
-      ),
+          ),
+        ).animate().fadeIn(delay: 300.ms, duration: 500.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
+
+        const SizedBox(height: 32),
+        
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          ),
+          child: Text(
+            'Back to Login',
+            style: AppTextStyles.labelLarge.copyWith(color: AppColors.textSecondary),
+          ),
+        ).animate().fadeIn(delay: 600.ms),
+      ],
     );
   }
 
@@ -169,43 +182,37 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           height: 100,
           decoration: BoxDecoration(
             color: AppColors.successLight,
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(32),
           ),
           child: const Icon(
             Icons.mark_email_read_outlined,
             size: 52,
             color: AppColors.success,
           ),
-        )
-            .animate()
-            .scale(duration: 600.ms, curve: Curves.elasticOut)
-            .fadeIn(duration: 400.ms),
+        ).animate().scale(duration: 600.ms, curve: Curves.elasticOut).fadeIn(duration: 400.ms),
 
         const SizedBox(height: 32),
 
         Text('Check your email!', style: AppTextStyles.displayMedium)
-            .animate()
-            .fadeIn(delay: 300.ms, duration: 400.ms),
+            .animate().fadeIn(delay: 200.ms, duration: 400.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
 
         Text(
           'We sent a password reset link to\n${_emailController.text}',
-          style: AppTextStyles.bodyMedium,
+          style: AppTextStyles.titleMedium.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w400, height: 1.5),
           textAlign: TextAlign.center,
-        )
-            .animate()
-            .fadeIn(delay: 400.ms, duration: 400.ms),
+        ).animate().fadeIn(delay: 300.ms, duration: 400.ms),
 
         const SizedBox(height: 48),
 
-        FilledButton(
+        CustomButton(
+          text: 'Back to Login',
           onPressed: () => Navigator.pop(context),
-          child: const Text('Back to Login'),
-        )
-            .animate()
-            .fadeIn(delay: 500.ms, duration: 400.ms)
-            .slideY(begin: 0.3, end: 0),
+          isOutlined: true,
+          backgroundColor: AppColors.border,
+          textColor: AppColors.textPrimary,
+        ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2, end: 0),
       ],
     );
   }

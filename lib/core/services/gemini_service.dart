@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -294,17 +293,18 @@ class GeminiService {
           ? ((totalAwarded / totalMarks) * 100)
           : 0.0;
       String overallFeedback = 'Good effort! Keep practicing to improve.';
-      if (percentage >= 90)
+      if (percentage >= 90) {
         overallFeedback =
             'Outstanding performance! You have an excellent grasp of the material.';
-      else if (percentage >= 75)
+      } else if (percentage >= 75) {
         overallFeedback = 'Great job! You understand most concepts well.';
-      else if (percentage >= 50)
+      } else if (percentage >= 50) {
         overallFeedback =
             'Good effort, but there is room for improvement in key conceptual areas.';
-      else
+      } else {
         overallFeedback =
             'Needs improvement. Please review the missing concepts indicated in the feedback.';
+      }
 
       return ExamEvaluationResult(
         questionResults: results,
@@ -346,25 +346,4 @@ class GeminiService {
     );
   }
 
-  String _buildEvaluationPrompt({
-    required QuestionModel question,
-    required String studentAnswer,
-  }) => '';
-  EvaluationResult _parseEvaluationResponse(
-    String response,
-    QuestionModel question,
-  ) {
-    return EvaluationResult(
-      questionNumber: 1,
-      marksAwarded: 0,
-      totalMarks: 1,
-      strengths: '',
-      weaknesses: '',
-      missingConcepts: '',
-      suggestions: '',
-      aiConfidence: 0,
-    );
-  }
-
-  String _extractAnswerForQuestion(String fullText, int questionNumber) => '';
 }

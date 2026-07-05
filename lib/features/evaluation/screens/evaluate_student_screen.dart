@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +16,8 @@ import '../../exam/providers/exam_provider.dart';
 import '../../exam/providers/student_provider.dart';
 import '../providers/evaluation_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/custom_text_field.dart';
 
 class EvaluateStudentScreen extends StatefulWidget {
   const EvaluateStudentScreen({super.key});
@@ -124,7 +126,7 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
     }
 
     return DropdownButtonFormField<ExamModel>(
-      value: _selectedExam,
+      initialValue: _selectedExam,
       isExpanded: true,
       hint: const Text('Choose reference answer key template'),
       decoration: const InputDecoration(prefixIcon: Icon(Icons.layers_outlined)),
@@ -158,7 +160,7 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
     final currentValue = classNames.contains(_selectedClass) ? _selectedClass : null;
 
     return DropdownButtonFormField<String>(
-      value: currentValue,
+      initialValue: currentValue,
       isExpanded: true,
       hint: const Text('All Classes'),
       decoration: const InputDecoration(prefixIcon: Icon(Icons.filter_list_outlined)),
@@ -203,14 +205,21 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
         final List<StudentModel> classRoster = entry.value;
 
         return Container(
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.border),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow.withValues(alpha: 0.04),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+            border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(20),
             child: ExpansionTile(
               backgroundColor: AppColors.surface,
               collapsedBackgroundColor: AppColors.surface,
@@ -244,11 +253,11 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(student.name, style: AppTextStyles.titleMedium),
-                            Text('Roll No: ${student.rollNumber} â€¢ USN: ${student.usn} â€¢ Sec: ${student.section}', style: AppTextStyles.caption),
+                            Text('Roll No: ${student.rollNumber} • USN: ${student.usn} • Sec: ${student.section}', style: AppTextStyles.caption),
                             if (hasFile)
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
-                                child: Text('ðŸ“‘ $fileName', style: AppTextStyles.caption.copyWith(color: AppColors.success, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                child: Text('📑 $fileName', style: AppTextStyles.caption.copyWith(color: AppColors.success, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
                               ),
                           ],
                         ),
@@ -531,16 +540,16 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text('Manual Grading: ${student.name}'),
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Text('Manual Grading: ${student.name}', style: AppTextStyles.titleMedium),
           content: Form(
             key: formKey,
-            child: TextFormField(
+            child: CustomTextField(
               controller: scoreController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Awarded Marks (Out of ${currentResult.totalMarks})',
-                prefixIcon: const Icon(Icons.grade_outlined),
-              ),
+              label: 'Awarded Marks (Out of ${currentResult.totalMarks})',
+              prefixIcon: const Icon(Icons.grade_outlined),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Please enter a score';
                 final marks = int.tryParse(v);
@@ -554,9 +563,10 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
             ),
-            FilledButton(
+            CustomButton(
+              text: 'Save Grade',
               onPressed: () {
                 if (!formKey.currentState!.validate()) return;
                 final manualScore = int.parse(scoreController.text.trim());
@@ -573,7 +583,7 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
                   );
                 });
               },
-              child: const Text('Save Grade'),
+              width: 140,
             ),
           ],
         );

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
@@ -77,6 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (user == null) return;
 
     try {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Uploading profile picture...')),
       );
@@ -190,19 +191,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  'â€¢ Save Time: Reduce hours of manual grading to minutes.',
+                  '\u2022 Save Time: Reduce hours of manual grading to minutes.',
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'â€¢ Maintain Consistency: Ensure uniform scoring criteria across all student submissions.',
+                  '\u2022 Maintain Consistency: Ensure uniform scoring criteria across all student submissions.',
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'â€¢ Provide Actionable Insights: Generate detailed feedback that helps students identify their strengths and areas for improvement.',
+                  '\u2022 Provide Actionable Insights: Generate detailed feedback that helps students identify their strengths and areas for improvement.',
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'â€¢ Digitize the Classroom: Seamlessly move from handwritten answer sheets to a structured, digital grading workflow.',
+                  '\u2022 Digitize the Classroom: Seamlessly move from handwritten answer sheets to a structured, digital grading workflow.',
                 ),
                 const SizedBox(height: 12),
                 const Text(
@@ -447,8 +448,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
       ),
       child: Column(
         children: [
@@ -595,8 +603,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
       ),
       child: Column(
         children: [
@@ -678,8 +693,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
       ),
       child: _buildToggleTile(
         icon: Icons.notifications_outlined,
@@ -698,12 +720,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildAccountSettings() {
     return Material(
       color: AppColors.surface,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(20),
       clipBehavior: Clip.antiAlias,
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadow.withValues(alpha: 0.04),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+          border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
         ),
         child: Column(
           children: [
@@ -776,13 +805,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
         if (confirm == true && mounted) {
           await context.read<AuthProvider>().signOut();
-          if (mounted) {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.login,
-              (route) => false,
-            );
-          }
+          if (!mounted) return;
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.login,
+            (route) => false,
+          );
         }
       },
       style: OutlinedButton.styleFrom(

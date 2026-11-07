@@ -45,20 +45,34 @@ class OcrService {
   final TextRecognizer _devanagiriRecognizer = TextRecognizer(
     script: TextRecognitionScript.devanagiri,
   );
+
+  final Map<SupportedLanguage, TextRecognizer> _cachedRecognizers = {};
+
   TextRecognizer _getRecognizer(SupportedLanguage language) {
+    if (_cachedRecognizers.containsKey(language)) {
+      return _cachedRecognizers[language]!;
+    }
+    TextRecognizer recognizer;
     switch (language) {
       case SupportedLanguage.hindi:
-        return TextRecognizer(script: TextRecognitionScript.devanagiri);
+        recognizer = TextRecognizer(script: TextRecognitionScript.devanagiri);
+        break;
       case SupportedLanguage.chinese:
-        return TextRecognizer(script: TextRecognitionScript.chinese);
+        recognizer = TextRecognizer(script: TextRecognitionScript.chinese);
+        break;
       case SupportedLanguage.japanese:
-        return TextRecognizer(script: TextRecognitionScript.japanese);
+        recognizer = TextRecognizer(script: TextRecognitionScript.japanese);
+        break;
       case SupportedLanguage.korean:
-        return TextRecognizer(script: TextRecognitionScript.korean);
+        recognizer = TextRecognizer(script: TextRecognitionScript.korean);
+        break;
       case SupportedLanguage.auto:
       case SupportedLanguage.english:
-        return TextRecognizer(script: TextRecognitionScript.latin);
+        recognizer = TextRecognizer(script: TextRecognitionScript.latin);
+        break;
     }
+    _cachedRecognizers[language] = recognizer;
+    return recognizer;
   }
   Future<OcrResult> extractTextFromImage(
       File imageFile, {
@@ -156,25 +170,29 @@ class OcrService {
 
         if (pageImage?.bytes != null) {
           final tempFile = File(
-            '${pdfFile.parent.path}/temp_page_$pageNum.jpg',
+            '${Directory.systemTemp.path}/temp_ocr_${DateTime.now().millisecondsSinceEpoch}_$pageNum.jpg',
           );
-          await tempFile.writeAsBytes(pageImage!.bytes);
+          try {
+            await tempFile.writeAsBytes(pageImage!.bytes);
 
-          final pageResult = await extractTextFromImage(
-            tempFile,
-            language: language,
-          );
+            final pageResult = await extractTextFromImage(
+              tempFile,
+              language: language,
+            );
 
-          allText.write('--- Page $pageNum ---\n');
-          allText.write(pageResult.extractedText);
-          allText.write('\n\n');
-          allBlocks.addAll(pageResult.textBlocks);
+            allText.write('--- Page $pageNum ---\n');
+            allText.write(pageResult.extractedText);
+            allText.write('\n\n');
+            allBlocks.addAll(pageResult.textBlocks);
 
-          if (pageNum == 1) {
-            detectedLang = pageResult.detectedLanguage;
+            if (pageNum == 1) {
+              detectedLang = pageResult.detectedLanguage;
+            }
+          } finally {
+            if (await tempFile.exists()) {
+              await tempFile.delete();
+            }
           }
-
-          await tempFile.delete();
         }
       }
 
@@ -251,5 +269,9 @@ class OcrService {
   void dispose() {
     _latinRecognizer.close();
     _devanagiriRecognizer.close();
+    for (final recognizer in _cachedRecognizers.values) {
+      recognizer.close();
+    }
+    _cachedRecognizers.clear();
   }
 }

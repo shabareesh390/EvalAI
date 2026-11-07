@@ -133,8 +133,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
     final countText = _studentCountController.text.trim();
     final int? studentCount = int.tryParse(countText);
 
-    if (className.isEmpty || studentCount == null || studentCount <= 0) {
-      _showSnackBar('Please enter a valid class name and student capacity count.');
+    if (className.isEmpty || studentCount == null || studentCount <= 0 || studentCount > 500) {
+      _showSnackBar('Please enter a valid class name and student capacity (1 to 500).');
       return;
     }
 
@@ -151,8 +151,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      // 2. High-Performance Atomic Batch Write to generate sequential unassigned roll numbers
-      final batch = _firestore.batch();
+      // 2. Batched writes to generate sequential unassigned roll numbers (chunked at 400)
+      WriteBatch batch = _firestore.batch();
+      int batchOps = 0;
 
       for (int i = 1; i <= studentCount; i++) {
         final studentId = _uuid.v4();
@@ -160,8 +161,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
         final placeholderMap = {
           'id': studentId,
-          'name': 'Unassigned Slot', // Placeholder moniker flag
-          'rollNumber': i.toString(), // Sequential Assignment
+          'name': 'Unassigned Slot',
+          'rollNumber': i.toString(),
           'usn': '',
           'className': className,
           'section': '',
@@ -169,9 +170,18 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
         };
 
         batch.set(studentRef, placeholderMap);
+        batchOps++;
+
+        if (batchOps == 400) {
+          await batch.commit();
+          batch = _firestore.batch();
+          batchOps = 0;
+        }
       }
 
-      await batch.commit(); // Push all slots atomicly to the cluster
+      if (batchOps > 0) {
+        await batch.commit();
+      }
 
       _refreshScreenData();
 

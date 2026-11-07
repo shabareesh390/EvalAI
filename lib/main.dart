@@ -9,7 +9,11 @@ import 'app.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(fileName: ".env");
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint("Note: .env file not found or failed to load: $e");
+  }
 
   // Initialize Firebase
   await Firebase.initializeApp(

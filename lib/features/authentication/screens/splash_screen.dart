@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(milliseconds: 600), () {
       if (!mounted) return;
       final authProvider = context.read<AuthProvider>();
       if (authProvider.isLoggedIn) {

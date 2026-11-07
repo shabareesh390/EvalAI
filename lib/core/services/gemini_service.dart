@@ -57,7 +57,7 @@ class GeminiService {
   GeminiService() {
     final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
     _model = GenerativeModel(
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       apiKey: apiKey,
       generationConfig: GenerationConfig(
         temperature: 0.1,
@@ -201,13 +201,7 @@ class GeminiService {
             "RATE LIMIT REACHED: The Google Free Tier allows 15 requests per minute. Please wait 60 seconds and click Evaluate again.";
       }
 
-      int total = questions.fold(0, (sum, q) => sum + q.marks);
-      return ExamEvaluationResult(
-        questionResults: [],
-        totalMarksAwarded: 0,
-        totalMarks: total,
-        overallFeedback: uiMessage,
-      );
+      throw Exception(uiMessage);
     }
   }
 
@@ -317,33 +311,44 @@ class GeminiService {
     }
   }
 
-  /// Legacy evaluation methods. Maintained for backward compatibility.
+  /// Evaluates extracted text against question blueprints.
   Future<ExamEvaluationResult> evaluateExam({
     required List<QuestionModel> questions,
     required String extractedAnswerText,
   }) async {
-    return ExamEvaluationResult(
-      questionResults: [],
-      totalMarksAwarded: 0,
-      totalMarks: 100,
-      overallFeedback: '',
-    );
-  }
+    final blueprintList = questions
+        .map(
+          (q) => {
+            "q": q.questionNumber,
+            "marks": q.marks,
+            "rubric": q.modelAnswer,
+            "keywords": q.keywords,
+          },
+        )
+        .toList();
+    final blueprintJsonStr = jsonEncode(blueprintList);
 
-  Future<EvaluationResult> evaluateQuestion({
-    required QuestionModel question,
-    required String studentAnswer,
-  }) async {
-    return EvaluationResult(
-      questionNumber: 1,
-      marksAwarded: 0,
-      totalMarks: 1,
-      strengths: '',
-      weaknesses: '',
-      missingConcepts: '',
-      suggestions: '',
-      aiConfidence: 0,
-    );
-  }
+    final prompt = '''
+    You are an expert board-exam evaluator. Read the following student answers extracted from the exam:
+    $extractedAnswerText
 
+    EXAM BLUEPRINT (MASTER KEY):
+    $blueprintJsonStr
+
+    Compare each answer conceptually to the blueprint.
+    Output a JSON array:
+    [
+      {
+        "q": <question_number_as_int>,
+        "marks": <marks_awarded_as_int>,
+        "applicable_total_marks": <applicable_max_marks_as_int>,
+        "feedback": "<detailed_feedback>"
+      }
+    ]
+    OUTPUT ONLY RAW JSON.
+    ''';
+
+    final response = await _generateContentWithRetry([Content.text(prompt)]);
+    return _processJsonAIResponse(response.text ?? '[]', questions, 0.0);
+  }
 }

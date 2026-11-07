@@ -29,13 +29,9 @@ dependencies:
 
   # UI
   flutter_animate: ^4.5.0
-  shimmer: ^3.0.0
-  lottie: ^3.1.2
-  dotted_border: ^2.1.0
 
   # Utils
   uuid: ^4.4.2
-  intl: ^0.20.2
 
   # Gemini AI
   google_generative_ai: ^0.4.3
@@ -67,9 +63,7 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/animations/
     - assets/fonts/
-    - .env
 
   fonts:
     - family: Inter

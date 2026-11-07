@@ -100,24 +100,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final teacherId = context.read<AuthProvider>().user?.uid ?? '';
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(child: _buildTopBar()),
-            SliverToBoxAdapter(child: _buildWelcomeHeader()),
-            SliverToBoxAdapter(child: _buildStatsGrid()),
-            SliverToBoxAdapter(child: _buildQuickActionsHeader()),
-            SliverToBoxAdapter(child: _buildQuickActions()),
-            SliverToBoxAdapter(child: _buildChartHeader()),
-            SliverToBoxAdapter(child: _buildPerformanceChart()),
-            SliverToBoxAdapter(child: _buildRecentExamsHeader()),
-            SliverToBoxAdapter(child: _buildRecentExams()),
-            SliverToBoxAdapter(child: _buildRecentEvaluationsHeader()),
-            SliverToBoxAdapter(child: _buildRecentEvaluations()),
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
-          ],
+        child: StreamBuilder<QuerySnapshot>(
+          stream: _firestore
+              .collection('evaluations')
+              .where('teacherId', isEqualTo: teacherId)
+              .snapshots(),
+          builder: (context, snapshot) {
+            final evalDocs = snapshot.data?.docs ?? [];
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: _buildTopBar()),
+                SliverToBoxAdapter(child: _buildWelcomeHeader(evalDocs)),
+                SliverToBoxAdapter(child: _buildStatsGrid(evalDocs)),
+                SliverToBoxAdapter(child: _buildQuickActionsHeader()),
+                SliverToBoxAdapter(child: _buildQuickActions()),
+                SliverToBoxAdapter(child: _buildChartHeader()),
+                SliverToBoxAdapter(child: _buildPerformanceChart(evalDocs)),
+                SliverToBoxAdapter(child: _buildRecentExamsHeader()),
+                SliverToBoxAdapter(child: _buildRecentExams(evalDocs)),
+                SliverToBoxAdapter(child: _buildRecentEvaluationsHeader()),
+                SliverToBoxAdapter(child: _buildRecentEvaluations(evalDocs)),
+                const SliverToBoxAdapter(child: SizedBox(height: 32)),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -202,126 +213,106 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ).animate().fadeIn(duration: 400.ms);
   }
 
-  Widget _buildWelcomeHeader() {
-    final teacherId = context.read<AuthProvider>().user?.uid ?? '';
+  Widget _buildWelcomeHeader(List<QueryDocumentSnapshot> evalDocs) {
+    final totalDocs = evalDocs.length;
+    final pendingReview = totalDocs > 0 ? (totalDocs * 0.1).ceil() : 0;
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection('evaluations')
-          .where('teacherId', isEqualTo: teacherId)
-          .snapshots(),
-      builder: (context, snapshot) {
-        final totalDocs = snapshot.data?.docs.length ?? 0;
-        final pendingReview = totalDocs > 0 ? (totalDocs * 0.1).ceil() : 0;
-
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('HELLO,', style: AppTextStyles.bodyMedium),
-              const SizedBox(height: 4),
-              Consumer<AuthProvider>(
-                builder: (context, auth, _) {
-                  final name = auth.user?.displayName ?? 'Teacher';
-                  return Text(name, style: AppTextStyles.displayMedium);
-                },
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.warningLight,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.pending_actions_rounded,
-                      size: 16,
-                      color: AppColors.warning,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '$pendingReview papers need review',
-                      style: AppTextStyles.labelMedium.copyWith(
-                        color: AppColors.warning,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('HELLO,', style: AppTextStyles.bodyMedium),
+          const SizedBox(height: 4),
+          Consumer<AuthProvider>(
+            builder: (context, auth, _) {
+              final name = auth.user?.displayName ?? 'Teacher';
+              return Text(name, style: AppTextStyles.displayMedium);
+            },
           ),
-        );
-      },
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.warningLight,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.pending_actions_rounded,
+                  size: 16,
+                  color: AppColors.warning,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '$pendingReview papers need review',
+                  style: AppTextStyles.labelMedium.copyWith(
+                    color: AppColors.warning,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     )
         .animate()
         .fadeIn(delay: 100.ms, duration: 400.ms)
         .slideY(begin: 0.2, end: 0);
   }
 
-  Widget _buildStatsGrid() {
+  Widget _buildStatsGrid(List<QueryDocumentSnapshot> evalDocs) {
     final examProvider = context.watch<ExamProvider>();
     final studentProvider = context.watch<StudentProvider>();
-    final teacherId = context.read<AuthProvider>().user?.uid ?? '';
+    final int totalEvaluations = evalDocs.length;
+    final int pendingReview = totalEvaluations > 0 ? (totalEvaluations * 0.1).ceil() : 0;
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection('evaluations')
-          .where('teacherId', isEqualTo: teacherId)
-          .snapshots(),
-      builder: (context, snapshot) {
-        final int totalEvaluations = snapshot.data?.docs.length ?? 0;
-        final int pendingReview = totalEvaluations > 0 ? (totalEvaluations * 0.1).ceil() : 0;
-
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
-          child: GridView.count(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio: 1.2,
-            children: [
-              _buildStatCard(
-                label: 'Total Exams',
-                value: '${examProvider.exams.length}',
-                icon: Icons.assignment_outlined,
-                color: AppColors.primary,
-                bgColor: AppColors.primary.withValues(alpha: 0.08),
-                delay: 200,
-              ),
-              _buildStatCard(
-                label: 'Students',
-                value: '${studentProvider.students.length}',
-                icon: Icons.people_outline,
-                color: AppColors.success,
-                bgColor: AppColors.successLight,
-                delay: 300,
-              ),
-              _buildStatCard(
-                label: 'Evaluated',
-                value: '$totalEvaluations',
-                icon: Icons.check_circle_outline,
-                color: AppColors.info,
-                bgColor: AppColors.infoLight,
-                delay: 400,
-              ),
-              _buildStatCard(
-                label: 'Pending Review',
-                value: '$pendingReview',
-                icon: Icons.hourglass_empty_rounded,
-                color: AppColors.warning,
-                bgColor: AppColors.warningLight,
-                delay: 500,
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
+      child: GridView.count(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        childAspectRatio: 1.2,
+        children: [
+          _buildStatCard(
+            label: 'Total Exams',
+            value: '${examProvider.exams.length}',
+            icon: Icons.assignment_outlined,
+            color: AppColors.primary,
+            bgColor: AppColors.primary.withValues(alpha: 0.08),
+            delay: 200,
           ),
-        );
-      },
+          _buildStatCard(
+            label: 'Students',
+            value: '${studentProvider.students.length}',
+            icon: Icons.people_outline,
+            color: AppColors.success,
+            bgColor: AppColors.successLight,
+            delay: 300,
+          ),
+          _buildStatCard(
+            label: 'Evaluated',
+            value: '$totalEvaluations',
+            icon: Icons.check_circle_outline,
+            color: AppColors.info,
+            bgColor: AppColors.infoLight,
+            delay: 400,
+          ),
+          _buildStatCard(
+            label: 'Pending Review',
+            value: '$pendingReview',
+            icon: Icons.hourglass_empty_rounded,
+            color: AppColors.warning,
+            bgColor: AppColors.warningLight,
+            delay: 500,
+          ),
+        ],
+      ),
     );
   }
 
@@ -506,84 +497,72 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
 
-  Widget _buildPerformanceChart() {
-    final teacherId = context.read<AuthProvider>().user?.uid ?? '';
+  Widget _buildPerformanceChart(List<QueryDocumentSnapshot> docs) {
+    // Dynamic evaluation dataset tracking grouped by generic score tiers
+    int excellent = 0; // >= 80%
+    int good = 0;      // >= 60%
+    int average = 0;   // >= 40%
+    int remedial = 0;  // < 40%
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection('evaluations')
-          .where('teacherId', isEqualTo: teacherId)
-          .snapshots(),
-      builder: (context, snapshot) {
-        final docs = snapshot.data?.docs ?? [];
+    for (var doc in docs) {
+      final data = doc.data() as Map<String, dynamic>;
+      final double marksAwarded = (data['totalMarksAwarded'] ?? 0).toDouble();
+      final double totalMarks = (data['totalMarks'] ?? 1).toDouble();
+      final double percentage = totalMarks > 0 ? (marksAwarded / totalMarks) * 100 : 0.0;
+      if (percentage >= 80) { excellent++; }
+      else if (percentage >= 60) { good++; }
+      else if (percentage >= 40) { average++; }
+      else { remedial++; }
+    }
 
-        // Dynamic evaluation dataset tracking grouped by generic score tiers
-        int excellent = 0; // >= 80%
-        int good = 0;      // >= 60%
-        int average = 0;   // >= 40%
-        int remedial = 0;  // < 40%
+    // Determine max vertical bounds range scale dynamically to avoid division errors
+    int maxCount = [excellent, good, average, remedial].reduce((a, b) => a > b ? a : b);
+    if (maxCount == 0) maxCount = 1;
 
-        for (var doc in docs) {
-          final data = doc.data() as Map<String, dynamic>;
-          final double marksAwarded = (data['totalMarksAwarded'] ?? 0).toDouble();
-          final double totalMarks = (data['totalMarks'] ?? 1).toDouble();
-          final double percentage = totalMarks > 0 ? (marksAwarded / totalMarks) * 100 : 0.0;
-          if (percentage >= 80) { excellent++; }
-          else if (percentage >= 60) { good++; }
-          else if (percentage >= 40) { average++; }
-          else { remedial++; }
-        }
-
-        // Determine max vertical bounds range scale dynamically to avoid division errors
-        int maxCount = [excellent, good, average, remedial].reduce((a, b) => a > b ? a : b);
-        if (maxCount == 0) maxCount = 1;
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadow.withValues(alpha: 0.04),
-                  blurRadius: 30,
-                  offset: const Offset(0, 15),
-                ),
-              ],
-              border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadow.withValues(alpha: 0.04),
+              blurRadius: 30,
+              offset: const Offset(0, 15),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ],
+          border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Score Tier Distribution', style: AppTextStyles.titleMedium),
-                    Icon(Icons.bar_chart_rounded, color: AppColors.primary.withValues(alpha: 0.6), size: 20),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                SizedBox(
-                  height: 140,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildVerticalBar('Excellent\n(>80%)', excellent, maxCount, AppColors.success),
-                      _buildVerticalBar('Good\n(60-80%)', good, maxCount, AppColors.info),
-                      _buildVerticalBar('Average\n(40-60%)', average, maxCount, AppColors.warning),
-                      _buildVerticalBar('Remedial\n(<40%)', remedial, maxCount, AppColors.error),
-                    ],
-                  ),
-                ),
+                Text('Score Tier Distribution', style: AppTextStyles.titleMedium),
+                Icon(Icons.bar_chart_rounded, color: AppColors.primary.withValues(alpha: 0.6), size: 20),
               ],
             ),
-          ),
-        );
-      },
+            const SizedBox(height: 24),
+
+            SizedBox(
+              height: 140,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  _buildVerticalBar('Excellent\n(>80%)', excellent, maxCount, AppColors.success),
+                  _buildVerticalBar('Good\n(60-80%)', good, maxCount, AppColors.info),
+                  _buildVerticalBar('Average\n(40-60%)', average, maxCount, AppColors.warning),
+                  _buildVerticalBar('Remedial\n(<40%)', remedial, maxCount, AppColors.error),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     ).animate().fadeIn(delay: 820.ms, duration: 400.ms);
   }
 
@@ -649,7 +628,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ).animate().fadeIn(delay: 900.ms, duration: 400.ms);
   }
 
-  Widget _buildRecentExams() {
+  Widget _buildRecentExams(List<QueryDocumentSnapshot> evalDocs) {
     final teacherId = context.read<AuthProvider>().user?.uid ?? '';
     final studentProvider = context.watch<StudentProvider>();
 
@@ -657,8 +636,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       stream: _firestore
           .collection('exams')
           .where('teacherId', isEqualTo: teacherId)
-          .orderBy('createdAt', descending: true)
-          .limit(3)
           .snapshots(),
       builder: (context, examSnapshot) {
         if (examSnapshot.connectionState == ConnectionState.waiting) {
@@ -694,66 +671,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
         }
 
-        return StreamBuilder<QuerySnapshot>(
-          stream: _firestore
-              .collection('evaluations')
-              .where('teacherId', isEqualTo: teacherId)
-              .snapshots(),
-          builder: (context, evalSnapshot) {
-            final evalDocs = evalSnapshot.data?.docs ?? [];
+        return Column(
+          children: examDocs.asMap().entries.map((entry) {
+            final int index = entry.key;
+            final doc = entry.value;
+            final data = doc.data() as Map<String, dynamic>;
+
+            final String id = data['id'] ?? doc.id;
+            final String name = data['name'] ?? 'Unnamed Exam';
+            final String subject = data['subject'] ?? 'No Subject';
+            final String date = data['date'] ?? 'No Date';
+            final String className = data['className'] ?? '';
             
-            return Column(
-              children: examDocs.asMap().entries.map((entry) {
-                final int index = entry.key;
-                final doc = entry.value;
-                final data = doc.data() as Map<String, dynamic>;
-    
-                final String id = data['id'] ?? doc.id;
-                final String name = data['name'] ?? 'Unnamed Exam';
-                final String subject = data['subject'] ?? 'No Subject';
-                final String date = data['date'] ?? 'No Date';
-                final String className = data['className'] ?? '';
-                
-                // Count evaluations for this exam
-                int evaluatedCount = 0;
-                for (var eval in evalDocs) {
-                  final evalData = eval.data() as Map<String, dynamic>;
-                  if (evalData['examId'] == id) {
-                    evaluatedCount++;
-                  }
-                }
-                
-                // Count total students for this exam's class
-                int totalStudents = 0;
-                if (className.isNotEmpty) {
-                  totalStudents = studentProvider.students.where((s) => s.className.trim() == className.trim()).length;
-                }
-                if (totalStudents == 0) {
-                  totalStudents = studentProvider.students.length;
-                }
-                if (totalStudents == 0) totalStudents = 1; // Prevent division by zero visually
-    
-                final bool isCompleted = evaluatedCount >= totalStudents;
-    
-                final item = _ExamItem(
-                  name: name,
-                  subject: subject,
-                  date: date,
-                  evaluated: evaluatedCount,
-                  total: totalStudents,
-                  status: isCompleted ? 'Completed' : 'In Progress',
-                  statusColor: isCompleted ? AppColors.success : AppColors.warning,
-                );
-    
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: index < examDocs.length - 1 ? 12 : 0,
-                  ),
-                  child: _buildExamCard(item, index),
-                );
-              }).toList(),
+            // Count evaluations for this exam
+            int evaluatedCount = 0;
+            for (var eval in evalDocs) {
+              final evalData = eval.data() as Map<String, dynamic>;
+              if (evalData['examId'] == id) {
+                evaluatedCount++;
+              }
+            }
+            
+            // Count total students for this exam's class
+            int totalStudents = 0;
+            if (className.isNotEmpty) {
+              totalStudents = studentProvider.students.where((s) => s.className.trim() == className.trim()).length;
+            }
+            if (totalStudents == 0) {
+              totalStudents = studentProvider.students.length;
+            }
+            if (totalStudents == 0) totalStudents = 1; // Prevent division by zero visually
+
+            final bool isCompleted = evaluatedCount >= totalStudents;
+
+            final item = _ExamItem(
+              name: name,
+              subject: subject,
+              date: date,
+              evaluated: evaluatedCount,
+              total: totalStudents,
+              status: isCompleted ? 'Completed' : 'In Progress',
+              statusColor: isCompleted ? AppColors.success : AppColors.warning,
             );
-          }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: index < examDocs.length - 1 ? 12 : 0,
+              ),
+              child: _buildExamCard(item, index),
+            );
+          }).toList(),
         );
       },
     );
@@ -881,40 +848,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ).animate().fadeIn(delay: 1000.ms, duration: 400.ms);
   }
 
-  Widget _buildRecentEvaluations() {
-    final teacherId = context.read<AuthProvider>().user?.uid ?? '';
+  Widget _buildRecentEvaluations(List<QueryDocumentSnapshot> evalDocs) {
     final examProvider = context.watch<ExamProvider>();
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection('evaluations')
-          .where('teacherId', isEqualTo: teacherId)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          debugPrint('Firestore Error: ${snapshot.error}');
-        }
-        
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: CircularProgressIndicator(),
-          ));
-        }
-
-        var docs = snapshot.data?.docs ?? [];
-        
-        if (docs.isNotEmpty) {
-          // Sort locally to avoid requiring a composite index in Firestore
-          docs.sort((a, b) {
-            final aData = a.data() as Map<String, dynamic>;
-            final bData = b.data() as Map<String, dynamic>;
-            final aTime = DateTime.tryParse(aData['evaluatedAt']?.toString() ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
-            final bTime = DateTime.tryParse(bData['evaluatedAt']?.toString() ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
-            return bTime.compareTo(aTime);
-          });
-          if (docs.length > 5) docs = docs.sublist(0, 5);
-        }
+    var docs = List<QueryDocumentSnapshot>.from(evalDocs);
+    if (docs.isNotEmpty) {
+      // Sort locally to avoid requiring a composite index in Firestore
+      docs.sort((a, b) {
+        final aData = a.data() as Map<String, dynamic>;
+        final bData = b.data() as Map<String, dynamic>;
+        final aTime = DateTime.tryParse(aData['evaluatedAt']?.toString() ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bTime = DateTime.tryParse(bData['evaluatedAt']?.toString() ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return bTime.compareTo(aTime);
+      });
+      if (docs.length > 5) docs = docs.sublist(0, 5);
+    }
 
         if (docs.isEmpty) {
           return Container(
@@ -1035,8 +983,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             }).toList(),
           ),
         );
-      },
-    );
   }
 }
 

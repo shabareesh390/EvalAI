@@ -49,3 +49,7 @@ app.*.map.json
 *.key
 google-services.json
 GoogleService-Info.plist
+*.apk
+android/build/
+.gradle/
+.vscode/

@@ -3,13 +3,15 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/models/question_model.dart';
+import '../../../core/models/user_model.dart';
+import '../../../core/models/exam_model.dart';
 import '../../../core/services/gemini_service.dart';
-import '../../../core/services/pdf_service.dart';
+import '../../../core/services/pdf_report_service.dart';
+import 'pdf_preview_screen.dart';
 
 class EvaluationScreen extends StatefulWidget {
   final List<QuestionModel> questions;
   final String extractedText;
-
 
   const EvaluationScreen({
     super.key,
@@ -23,7 +25,6 @@ class EvaluationScreen extends StatefulWidget {
 
 class _EvaluationScreenState extends State<EvaluationScreen> {
   final GeminiService _geminiService = GeminiService();
-  final PdfService _pdfService = PdfService();
 
   ExamEvaluationResult? _evaluationResult;
   bool _isEvaluating = false;
@@ -74,20 +75,46 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 16),
               child: FilledButton.icon(
-                onPressed: () async {
-                  await _pdfService.generateStudentReport(
-                    studentName: 'Student Name',
-                    examName: 'Exam',
-                    subject: 'Subject',
+                onPressed: () {
+                  final dummyStudent = StudentModel(
+                    id: '',
+                    name: 'Student',
+                    usn: '',
+                    rollNumber: '1',
+                    className: '',
+                    section: '',
+                    teacherId: '',
+                  );
+                  final dummyExam = ExamModel(
+                    id: '',
+                    name: 'Exam',
+                    subject: 'General',
+                    totalMarks: _evaluationResult!.totalMarks,
                     date: DateTime.now().toString().split(' ')[0],
-                    result: _evaluationResult!,
+                    teacherId: '',
+                    className: '',
+                    questions: widget.questions,
+                    createdAt: DateTime.now(),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PdfPreviewScreen(
+                        title: 'Evaluation Report',
+                        buildPdf: (format) =>
+                            PdfReportService.buildPdfForStudent(
+                              format,
+                              student: dummyStudent,
+                              exam: dummyExam,
+                              result: _evaluationResult!,
+                            ),
+                      ),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
                 label: const Text('Export'),
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(80, 38),
-                ),
+                style: FilledButton.styleFrom(minimumSize: const Size(80, 38)),
               ),
             ),
         ],
@@ -107,32 +134,34 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Icon(
-              Icons.auto_awesome_rounded,
-              size: 40,
-              color: AppColors.primary,
-            ),
-          )
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  size: 40,
+                  color: AppColors.primary,
+                ),
+              )
               .animate(onPlay: (c) => c.repeat())
               .shimmer(duration: 1500.ms, color: AppColors.accent),
 
           const SizedBox(height: 24),
 
-          Text('AI Evaluating...', style: AppTextStyles.headlineMedium)
-              .animate()
-              .fadeIn(duration: 400.ms),
+          Text(
+            'AI Evaluating...',
+            style: AppTextStyles.headlineMedium,
+          ).animate().fadeIn(duration: 400.ms),
 
           const SizedBox(height: 8),
 
-          Text(_currentStatus, style: AppTextStyles.bodyMedium)
-              .animate()
-              .fadeIn(duration: 400.ms),
+          Text(
+            _currentStatus,
+            style: AppTextStyles.bodyMedium,
+          ).animate().fadeIn(duration: 400.ms),
 
           const SizedBox(height: 32),
 
@@ -163,10 +192,7 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
           const SizedBox(height: 8),
           Text(_currentStatus, style: AppTextStyles.bodyMedium),
           const SizedBox(height: 24),
-          FilledButton(
-            onPressed: _startEvaluation,
-            child: const Text('Retry'),
-          ),
+          FilledButton(onPressed: _startEvaluation, child: const Text('Retry')),
         ],
       ),
     );
@@ -190,14 +216,15 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
         const SizedBox(height: 24),
 
         // â”€â”€ Question-wise Results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        Text('Question-wise Analysis', style: AppTextStyles.headlineMedium)
-            .animate()
-            .fadeIn(delay: 300.ms),
+        Text(
+          'Question-wise Analysis',
+          style: AppTextStyles.headlineMedium,
+        ).animate().fadeIn(delay: 300.ms),
 
         const SizedBox(height: 16),
 
         ...result.questionResults.asMap().entries.map(
-              (entry) => Padding(
+          (entry) => Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: _buildQuestionResult(entry.value, entry.key),
           ),
@@ -257,60 +284,58 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
             ),
             child: Text(
               '${percentage.toStringAsFixed(1)}%',
-              style: AppTextStyles.titleLarge.copyWith(
-                color: Colors.white,
-              ),
+              style: AppTextStyles.titleLarge.copyWith(color: Colors.white),
             ),
           ),
         ],
       ),
-    )
-        .animate()
-        .fadeIn(duration: 500.ms)
-        .slideY(begin: 0.3, end: 0);
+    ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.3, end: 0);
   }
 
   // â”€â”€ Overall Feedback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildOverallFeedback(ExamEvaluationResult result) {
     return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow.withValues(alpha: 0.04),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.auto_awesome_rounded,
-                color: AppColors.primary,
-                size: 20,
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow.withValues(alpha: 0.04),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-              const SizedBox(width: 8),
-              Text('AI Feedback', style: AppTextStyles.titleLarge),
             ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            result.overallFeedback,
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textPrimary,
-              height: 1.6,
+            border: Border.all(
+              color: AppColors.border.withValues(alpha: 0.5),
+              width: 1,
             ),
           ),
-        ],
-      ),
-    )
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(
+                    Icons.auto_awesome_rounded,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text('AI Feedback', style: AppTextStyles.titleLarge),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                result.overallFeedback,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textPrimary,
+                  height: 1.6,
+                ),
+              ),
+            ],
+          ),
+        )
         .animate()
         .fadeIn(delay: 200.ms, duration: 400.ms)
         .slideY(begin: 0.2, end: 0);
@@ -330,141 +355,144 @@ class _EvaluationScreenState extends State<EvaluationScreen> {
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow.withValues(alpha: 0.04),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1),
-      ),
-      child: Column(
-        children: [
-          // â”€â”€ Question Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: resultColor.withValues(alpha: 0.05),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow.withValues(alpha: 0.04),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
+            ],
+            border: Border.all(
+              color: AppColors.border.withValues(alpha: 0.5),
+              width: 1,
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: resultColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Q${result.questionNumber}',
-                      style: AppTextStyles.labelMedium.copyWith(
-                        color: resultColor,
-                      ),
-                    ),
+          ),
+          child: Column(
+            children: [
+              // â”€â”€ Question Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: resultColor.withValues(alpha: 0.05),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Question ${result.questionNumber}',
-                        style: AppTextStyles.titleMedium,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'AI Confidence: ${result.aiConfidence.toInt()}%',
-                        style: AppTextStyles.caption,
-                      ),
-                    ],
-                  ),
-                ),
-                // Marks badge
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                child: Row(
                   children: [
-                    Text(
-                      '${result.marksAwarded}/${result.totalMarks}',
-                      style: AppTextStyles.numericMedium.copyWith(
-                        color: resultColor,
-                        fontSize: 20,
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: resultColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Q${result.questionNumber}',
+                          style: AppTextStyles.labelMedium.copyWith(
+                            color: resultColor,
+                          ),
+                        ),
                       ),
                     ),
-                    Text(
-                      '${percentage.toInt()}%',
-                      style: AppTextStyles.caption.copyWith(
-                        color: resultColor,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Question ${result.questionNumber}',
+                            style: AppTextStyles.titleMedium,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'AI Confidence: ${result.aiConfidence.toInt()}%',
+                            style: AppTextStyles.caption,
+                          ),
+                        ],
                       ),
+                    ),
+                    // Marks badge
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '${result.marksAwarded}/${result.totalMarks}',
+                          style: AppTextStyles.numericMedium.copyWith(
+                            color: resultColor,
+                            fontSize: 20,
+                          ),
+                        ),
+                        Text(
+                          '${percentage.toInt()}%',
+                          style: AppTextStyles.caption.copyWith(
+                            color: resultColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+
+              // â”€â”€ Question Details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    // Strengths
+                    _buildFeedbackRow(
+                      icon: Icons.check_circle_outline,
+                      color: AppColors.success,
+                      label: 'Strengths',
+                      text: result.strengths,
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Weaknesses
+                    _buildFeedbackRow(
+                      icon: Icons.cancel_outlined,
+                      color: AppColors.error,
+                      label: 'Weaknesses',
+                      text: result.weaknesses,
+                    ),
+
+                    if (result.missingConcepts.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      _buildFeedbackRow(
+                        icon: Icons.lightbulb_outline,
+                        color: AppColors.warning,
+                        label: 'Missing',
+                        text: result.missingConcepts,
+                      ),
+                    ],
+
+                    const SizedBox(height: 12),
+
+                    // Suggestions
+                    _buildFeedbackRow(
+                      icon: Icons.tips_and_updates_outlined,
+                      color: AppColors.primary,
+                      label: 'Suggestion',
+                      text: result.suggestions,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-
-          // â”€â”€ Question Details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Strengths
-                _buildFeedbackRow(
-                  icon: Icons.check_circle_outline,
-                  color: AppColors.success,
-                  label: 'Strengths',
-                  text: result.strengths,
-                ),
-
-                const SizedBox(height: 12),
-
-                // Weaknesses
-                _buildFeedbackRow(
-                  icon: Icons.cancel_outlined,
-                  color: AppColors.error,
-                  label: 'Weaknesses',
-                  text: result.weaknesses,
-                ),
-
-                if (result.missingConcepts.isNotEmpty) ...[
-                  const SizedBox(height: 12),
-                  _buildFeedbackRow(
-                    icon: Icons.lightbulb_outline,
-                    color: AppColors.warning,
-                    label: 'Missing',
-                    text: result.missingConcepts,
-                  ),
-                ],
-
-                const SizedBox(height: 12),
-
-                // Suggestions
-                _buildFeedbackRow(
-                  icon: Icons.tips_and_updates_outlined,
-                  color: AppColors.primary,
-                  label: 'Suggestion',
-                  text: result.suggestions,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    )
+        )
         .animate()
         .fadeIn(
-      delay: Duration(milliseconds: 400 + (index * 150)),
-      duration: 400.ms,
-    )
+          delay: Duration(milliseconds: 400 + (index * 150)),
+          duration: 400.ms,
+        )
         .slideY(begin: 0.2, end: 0);
   }
 

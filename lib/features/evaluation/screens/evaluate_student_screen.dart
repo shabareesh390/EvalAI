@@ -384,7 +384,7 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
           },
         );
 
-        if (evaluationResult != null) {
+        if (evaluationResult != null && evaluationResult.questionResults.isNotEmpty) {
           await evaluationProvider.saveEvaluation(
             exam: _selectedExam!,
             student: student,
@@ -396,12 +396,14 @@ class _EvaluateStudentScreenState extends State<EvaluateStudentScreen> {
 
           _batchResults[studentKey] = evaluationResult;
         } else {
-          // Fallback if AI entirely fails
+          // Flag for manual review without corrupting database
           final manualResult = ExamEvaluationResult(
             totalMarksAwarded: 0,
             totalMarks: _selectedExam!.totalMarks,
             questionResults: const [],
-            overallFeedback: "Failed to read document. Manual evaluation recommended.",
+            overallFeedback: evaluationResult?.overallFeedback.isNotEmpty == true
+                ? evaluationResult!.overallFeedback
+                : "Evaluation failed. Manual evaluation recommended.",
           );
           _batchResults[studentKey] = manualResult;
         }

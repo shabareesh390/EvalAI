@@ -23,6 +23,16 @@ class _BulkAddStudentsScreenState extends State<BulkAddStudentsScreen> {
   // Step 2 Controllers
   List<TextEditingController> _nameControllers = [];
 
+  @override
+  void dispose() {
+    _classController.dispose();
+    _countController.dispose();
+    for (var c in _nameControllers) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
   void _generateSlots() {
     final count = int.tryParse(_countController.text) ?? 0;
     if (_classController.text.isEmpty || count <= 0) {
@@ -54,6 +64,7 @@ class _BulkAddStudentsScreenState extends State<BulkAddStudentsScreen> {
         if (name.isNotEmpty) {
           final docRef = FirebaseFirestore.instance.collection('students').doc();
           batch.set(docRef, {
+            'id': docRef.id,
             'studentId': docRef.id,
             'teacherId': teacherId,
             'className': _classController.text.trim(),

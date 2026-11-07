@@ -62,7 +62,7 @@ class _CreateExamScreenState extends State<CreateExamScreen> {
       final pdfBytes = result.files.single.bytes!;
 
       final model = GenerativeModel(
-        model: 'gemini-3.5-flash',
+        model: 'gemini-1.5-flash',
         apiKey: apiKey,
         generationConfig: GenerationConfig(
           responseMimeType: 'application/json',
@@ -238,7 +238,9 @@ class _CreateExamScreenState extends State<CreateExamScreen> {
             'modelAnswer': q['model_answer'] ?? q['modelAnswer'] ?? '',
             'model_answer': q['model_answer'] ?? q['modelAnswer'] ?? '',
             'marks': rawMarks,
-            'keywords': q['keywords'] ?? '',
+            'keywords': q['keywords'] is Iterable
+                ? List<String>.from((q['keywords'] as Iterable).map((k) => k.toString()))
+                : <String>[],
           });
         }
       }

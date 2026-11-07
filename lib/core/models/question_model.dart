@@ -33,7 +33,9 @@ class QuestionModel {
       questionNumber: map['questionNumber'] ?? 0,
       marks: map['marks'] ?? 0,
       modelAnswer: map['modelAnswer'] ?? '',
-      keywords: List<String>.from(map['keywords'] ?? []),
+      keywords: map['keywords'] is Iterable
+          ? List<String>.from((map['keywords'] as Iterable).map((e) => e.toString()))
+          : [],
       rubric: map['rubric'] ?? '',
     );
   }

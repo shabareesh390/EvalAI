@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/models/exam_model.dart';
@@ -68,7 +68,6 @@ class ExamProvider extends ChangeNotifier {
       final snapshot = await _firestore
           .collection('exams')
           .where('teacherId', isEqualTo: teacherId)
-          .orderBy('createdAt', descending: true)
           .get();
 
       List<ExamModel> loadedExams = [];
@@ -81,6 +80,8 @@ class ExamProvider extends ChangeNotifier {
           debugPrint("Skipping corrupted exam document [${doc.id}]: $documentError");
         }
       }
+
+      loadedExams.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       _exams = loadedExams;
       _setSuccess();
